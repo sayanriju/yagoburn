@@ -6,6 +6,8 @@ import wx
 import os,fnmatch
 import functions as fun
 
+CDROOT='/tmp/cdroot'
+
 # begin wxGlade: extracode
 # end wxGlade
 
@@ -27,15 +29,15 @@ class MyFrame(wx.Frame):
         self.blank_disk = wx.Panel(self.notebook_other_op, -1)
         self.data_dvd_pane = wx.Panel(self.notebook_top, 30)
         self.notebook_data_dvd = wx.Notebook(self.data_dvd_pane, -1, style=0)
-        self.data_dvd_settings = wx.Panel(self.notebook_data_dvd, -1)
+        self.data_dvd_settings = wx.Panel(self.notebook_data_dvd)
         self.data_dvd = wx.Panel(self.notebook_data_dvd, -1)
         self.data_cd_pane = wx.Panel(self.notebook_top, 20)
         self.notebook_data_cd = wx.Notebook(self.data_cd_pane, -1, style=0)
-        self.data_cd_settings = wx.Panel(self.notebook_data_cd, -1)
+        self.data_cd_settings = wx.Panel(self.notebook_data_cd)
         self.data_cd = wx.Panel(self.notebook_data_cd, -1)
         self.audio_cd_pane = wx.Panel(self.notebook_top, 10)
         self.notebook_audio_cd = wx.Notebook(self.audio_cd_pane, -1, style=0)
-        self.audio_cd_settings = wx.Panel(self.notebook_audio_cd, -1)
+        self.audio_cd_settings = wx.Panel(self.notebook_audio_cd)
         self.audio_cd = wx.Panel(self.notebook_audio_cd, 11)
         self.sizer_10_staticbox = wx.StaticBox(self.data_cd, -1, "Files/Directories to Burn")
         self.sizer_10_copy_staticbox = wx.StaticBox(self.data_dvd, -1, "Files/Directories to Burn")
@@ -173,6 +175,8 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.SelectIsoLocation, self.burn_isosel_button)
         self.Bind(wx.EVT_BUTTON, self.ShowDeviceProp, self.burniso_devprop_button)
         self.Bind(wx.EVT_BUTTON, self.OnBurnIso, self.burniso_burn_button)
+        
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToAudioSettingsTab, self.notebook_audio_cd)
         # end wxGlade
         il = wx.ImageList(32,32)
         img0 = il.Add(wx.Bitmap('icons/audiocd.png', wx.BITMAP_TYPE_PNG))  
@@ -459,9 +463,7 @@ class MyFrame(wx.Frame):
         # end wxGlade
 
 ## Callback Handler defintions
-
-    def AddAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
-        self.audio_files_to_burn += (fun.AddFileDialog("Select .wav files to add:","Wav files (*.wav)|*.wav|All files (*.*)|*.*"))
+    def UpdateAudioFilesView(self):
         ####### remove duplicates from list
         self.audio_files_to_burn=reduce(lambda x,y: x+[y][:1-int(y in x)], self.audio_files_to_burn, [])
         ############
@@ -475,14 +477,26 @@ class MyFrame(wx.Frame):
         maxsize=int(self.audio_size_list.GetValue().split(' ')[0])*(1024**2)
         self.audio_gauge.SetValue(int(totalsize*100/maxsize))
         
+
+    def AddAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
+        self.audio_files_to_burn += (fun.AddFileDialog("Select .wav files to add:","Wav files (*.wav)|*.wav|All files (*.*)|*.*"))
+        self.UpdateAudioFilesView()
         event.Skip()
         
     def RemoveAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `RemoveAudioTrack' not implemented!"
+        self.audio_files_to_burn.pop(self.audio_file_list.GetSelection())
+        self.UpdateAudioFilesView()
         event.Skip()
 
     def GoToAudioSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `GoToAudioSettingsTab' not implemented!"
+        if event.GetId()==wx.ID_FORWARD:  # Forward Button Pressed
+            self.notebook_audio_cd.SetSelection(1)
+        elif event.GetSelection()==0:     # manual tab change to previous tab; do nothing
+                return
+        ## Do this if forward button pressed OR manual tab change to next tab
+        fun.ClearCdRoot(CDROOT)   # Clear previous Cdroot, if any
+        fun.CreateCdRoot(CDROOT,self.audio_files_to_burn)  # Create new cdroot based on files to burn                
+
         event.Skip()
         
     def OnBurnAudio(self, event): # wxGlade: MyFrame.<event_handler>

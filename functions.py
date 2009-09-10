@@ -24,4 +24,13 @@ def AddFileDialog(header,filters):
 	dialog.Destroy()
 	
 	return selected
-	
+
+def ClearCdRoot(CDROOT):
+	import os
+	os.system('rm -rf {0}'.format(CDROOT))
+
+def CreateCdRoot(CDROOT,lst):
+	import os
+	os.makedirs(CDROOT)
+	for f in lst:
+		os.system('ln -s {0} {1}/'.format(f,CDROOT))
