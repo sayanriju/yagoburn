@@ -183,6 +183,7 @@ class MyFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Yagoburn")
+        self.SetIcon(wx.Icon('icons/yagoburn.png', wx.BITMAP_TYPE_ANY, 22, 22))
         self.SetSize((765, 515))
         self.audio_size_list.SetMinSize((107, 27))
         self.audio_size_list.SetSelection(3)
