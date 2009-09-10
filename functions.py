@@ -10,20 +10,40 @@ def FormatSize(size):
 		return "{0:.2f} MB".format(size/(1024.0**2))		
 	else:
 		return "{0:.2f} GB".format(size/(1024.0**3))
+	
+def GetDirectorySize(directory):
+	import os
+	dir_size = 0
+	for (path, dirs, files) in os.walk(directory):
+		for file in files:
+			filename = os.path.join(path, file)
+			dir_size += os.path.getsize(filename)
+	return dir_size
 
 def AddFileDialog(header,filters):
-	import wx
+	import wx,os
 	application = wx.PySimpleApp()
 	#filters = 'All files (*.*)|*.*|Text files (*.txt)|*.txt'
 	selected=[]
 	
-	dialog = wx.FileDialog ( None, message = header, wildcard = filters, style = wx.OPEN | wx.MULTIPLE )
+	dialog = wx.FileDialog ( None, message = header, defaultDir=os.path.expanduser('~/'),  wildcard = filters, style = wx.OPEN | wx.MULTIPLE )
 	
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPaths()
 	dialog.Destroy()
 	
 	return selected
+
+def AddDirDialog(header):
+	import wx,os
+	application = wx.PySimpleApp()
+	selected=[]
+	dialog = wx.DirDialog( None, message = header, defaultPath=os.path.expanduser('~/'),  style = wx.OPEN | wx.MULTIPLE )
+	if dialog.ShowModal() == wx.ID_OK:
+	   selected = dialog.GetPath()
+	dialog.Destroy()
+	
+	return selected	
 
 def ClearCdRoot(CDROOT):
 	import os
@@ -34,3 +54,5 @@ def CreateCdRoot(CDROOT,lst):
 	os.makedirs(CDROOT)
 	for f in lst:
 		os.system('ln -s {0} {1}/'.format(f,CDROOT))
+		
+

@@ -153,7 +153,7 @@ class MyFrame(wx.Frame):
         self.data_adddir_button.Bind(wx.EVT_BUTTON, self.AddDataDir)
         self.data_remove_button.Bind(wx.EVT_BUTTON, self.RemoveDataFile)
         self.data_clear_button.Bind(wx.EVT_BUTTON, self.ClearDataList)
-        self.data_next_button.Bind(wx.EVT_BUTTON, self.GotToDataSettingsTab)
+        self.data_next_button.Bind(wx.EVT_BUTTON, self.GoToDataSettingsTab)
         self.data_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
         self.data_onlyiso_check.Bind(wx.EVT_CHECKBOX, self.CheckOnlyCreateIso)
         self.data_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
@@ -177,7 +177,12 @@ class MyFrame(wx.Frame):
         self.burniso_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnIso)
         
         self.notebook_audio_cd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToAudioSettingsTab)
+        self.notebook_data_cd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToDataSettingsTab)
+        self.notebook_data_dvd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToDvdSettingsTab)
+        
+        self.Bind(wx.EVT_CLOSE, self.OnQuitProgram)
         # end wxGlade
+        
         il = wx.ImageList(32,32)
         img0 = il.Add(wx.Bitmap('icons/audiocd.png', wx.BITMAP_TYPE_PNG))  
         img1 = il.Add(wx.Bitmap('icons/datacd.png', wx.BITMAP_TYPE_PNG))        
@@ -502,25 +507,54 @@ class MyFrame(wx.Frame):
     def OnBurnAudio(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnBurnAudio' not implemented!"
         event.Skip()
+
+    def UpdateDataFilesView(self):
+        ####### remove duplicates from list
+        self.data_files_to_burn=reduce(lambda x,y: x+[y][:1-int(y in x)], self.data_files_to_burn, [])
+        ############
+        self.data_file_list.Clear()        
+        totalsize=0
+        for f in self.data_files_to_burn:
+            if os.path.isdir(f):
+                fsize=fun.GetDirectorySize(f)
+            else:
+                fsize=os.path.getsize(f)
+            self.data_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
+            totalsize+=fsize
+        self.data_totalsize_entry.SetValue(fun.FormatSize(totalsize))
+        maxsize=int(self.data_size_list.GetValue().split(' ')[0])*(1024**2)
+        self.data_gauge.SetValue(int(totalsize*100/maxsize))
         
     def AddDataFile(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `AddDataFile' not implemented!"
+        self.data_files_to_burn += (fun.AddFileDialog("Select  files to add:","All files (*.*)|*.*"))
+        self.UpdateDataFilesView()
         event.Skip()
 
     def AddDataDir(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `AddDataDir' not implemented!"
+        self.data_files_to_burn.append(fun.AddDirDialog("Select  directories to add:"))
+        self.UpdateDataFilesView()        
+        print self.data_files_to_burn
         event.Skip()
 
     def RemoveDataFile(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `RemoveDataFile' not implemented!"
+        self.data_files_to_burn.pop(self.data_file_list.GetSelection())
+        self.UpdateDataFilesView()        
         event.Skip()
 
     def ClearDataList(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ClearDataList' not implemented!"
+        self.data_files_to_burn=[]
+        self.data_file_list.Clear()
         event.Skip()
 
-    def GotToDataSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `GotToDataSettingsTab' not implemented!"
+    def GoToDataSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
+        if event.GetId()==wx.ID_FORWARD:  # Forward Button Pressed
+            self.notebook_data_cd.SetSelection(1)
+        elif event.GetSelection()==0:     # manual tab change to previous tab; do nothing
+                return
+        ## Do this if forward button pressed OR manual tab change to next tab
+        fun.ClearCdRoot(CDROOT)   # Clear previous Cdroot, if any
+        fun.CreateCdRoot(CDROOT,self.data_files_to_burn)  # Create new cdroot based on files to burn                
+        
         event.Skip()
         
     def OnBurnData(self, event): # wxGlade: MyFrame.<event_handler>
@@ -584,9 +618,16 @@ class MyFrame(wx.Frame):
         print "Event handler `SelectIsoLocation' not implemented!"
         event.Skip()
         
-
-
-
+    def OnQuitProgram(self, event):
+#
+        dlg = wx.MessageDialog(self, "Do you really want to exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
+#
+        if dlg.ShowModal() == wx.ID_YES:
+            fun.ClearCdRoot(CDROOT)
+            self.Destroy() # frame
+#
+        dlg.Destroy()
+        
 
 # end of class MyFrame
 
