@@ -43,9 +43,17 @@ def AddDirDialog(header):
 	
 	return selected	
 
+def GetIsoDialog():
+	import wx,os
+	dialog = wx.FileDialog(None, message="Select Iso file to burn: ", defaultDir=os.path.expanduser('~/'),wildcard="Iso files (*.iso)|*.iso", style= wx.FD_OPEN)
+	if dialog.ShowModal() == wx.ID_OK:
+	   selected = dialog.GetPaths()
+	dialog.Destroy()
+	
+	return selected	
+	
 def SaveIsoDialog():
 	import wx,os,fnmatch
-	app=wx.PySimpleApp()
 	dialog = wx.FileDialog( None, message = 'Select location to save iso file:', wildcard="ISO Files (*.iso)|*.iso", defaultDir=os.path.expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
 	if dialog.ShowModal() == wx.ID_OK:
 		selected = dialog.GetPath()
@@ -54,7 +62,9 @@ def SaveIsoDialog():
 		selected += '.iso'
 		
 	return selected		
-	
+
+def ShowDeviceProp(device):
+	pass
 
 def ClearCdRoot(CDROOT):
 	import os

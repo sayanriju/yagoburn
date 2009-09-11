@@ -96,7 +96,7 @@ class MyFrame(wx.Frame):
         self.data_mode_radiobox = wx.RadioBox(self.data_cd_settings, -1, "Write Mode : ", choices=["DAO", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
         self.data_onlyiso_check = wx.CheckBox(self.data_cd_settings, 101, "Only create ISO file")
         self.data_isopath_entry = wx.TextCtrl(self.data_cd_settings, -1, "")
-        self.data_isosel_button = wx.Button(self.data_cd_settings, wx.ID_OPEN, "")
+        self.data_isosel_button = wx.Button(self.data_cd_settings, wx.ID_SAVE, "")
         self.data_multi_check = wx.CheckBox(self.data_cd_settings, -1, "Start or Continue Multi-session")
         self.data_simulate_check = wx.CheckBox(self.data_cd_settings, -1, "Simulate Write")
         self.data_nofix_check = wx.CheckBox(self.data_cd_settings, -1, "Do NOT Fixate CD")
@@ -123,7 +123,7 @@ class MyFrame(wx.Frame):
         self.dvd_speed_list = wx.ComboBox(self.data_dvd_settings, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
         self.dvd_onlyiso_check = wx.CheckBox(self.data_dvd_settings, 102, "Only create ISO file")
         self.dvd_isopath_entry = wx.TextCtrl(self.data_dvd_settings, -1, "")
-        self.dvd_isosel_button = wx.Button(self.data_dvd_settings, wx.ID_OPEN, "")
+        self.dvd_isosel_button = wx.Button(self.data_dvd_settings, wx.ID_SAVE, "")
         self.dvd_multi_check = wx.CheckBox(self.data_dvd_settings, -1, "Start or Continue Multi-session")
         self.dvd_simulate_check = wx.CheckBox(self.data_dvd_settings, -1, "Simulate Write")
         self.dvd_nofix_check = wx.CheckBox(self.data_dvd_settings, -1, "Do NOT Fixate DVD")
@@ -137,7 +137,7 @@ class MyFrame(wx.Frame):
         self.formatdvd_button_copy = wx.Button(self.blank_disk, -1, "Format DVDRW")
         self.fullblankcd_button_copy = wx.Button(self.blank_disk, -1, "Full Blank CDRW")
         self.justfixate_button_copy = wx.Button(self.blank_disk, -1, "Just Fixate Disk")
-        self.label_1 = wx.StaticText(self.burn_iso, -1, "Choose ISO File :   ", style=wx.ST_NO_AUTORESIZE)
+        self.label_1 = wx.StaticText(self.burn_iso, -1, "Choose ISO File to burn : ", style=wx.ST_NO_AUTORESIZE)
         self.burn_isopath_entry = wx.TextCtrl(self.burn_iso, -1, "")
         self.burn_isosel_button = wx.Button(self.burn_iso, wx.ID_OPEN, "")
         self.label_2_copy_1_copy_1 = wx.StaticText(self.burn_iso, -1, "Device to write : ", style=wx.ST_NO_AUTORESIZE)
@@ -168,7 +168,7 @@ class MyFrame(wx.Frame):
         self.data_next_button.Bind(wx.EVT_BUTTON, self.GoToDataSettingsTab)
         self.data_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDataDeviceProp)
         self.data_onlyiso_check.Bind(wx.EVT_CHECKBOX, self.CheckOnlyCreateIso)
-        self.data_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
+        self.data_isosel_button.Bind(wx.EVT_BUTTON, self.SelectDataIsoSaveLocation)
         self.data_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnData)
         self.dvd_addfile_button.Bind(wx.EVT_BUTTON, self.AddDvdFile)
         self.dvd_adddir_button.Bind(wx.EVT_BUTTON, self.AddDvdDir)
@@ -177,7 +177,7 @@ class MyFrame(wx.Frame):
         self.dvd_next_button.Bind(wx.EVT_BUTTON, self.GoToDvdSettingsTab)
         self.dvd_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDvdDeviceProp)
         self.dvd_onlyiso_check.Bind(wx.EVT_CHECKBOX, self.CheckOnlyCreateIso)
-        self.dvd_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
+        self.dvd_isosel_button.Bind(wx.EVT_BUTTON, self.SelectDvdIsoSaveLocation)
         self.dvd_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnDvd)
         self.format_devprop_button.Bind(wx.EVT_BUTTON, self.ShowFormatDeviceProp)
         self.quickblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnQuickBlankCd)
@@ -654,6 +654,7 @@ class MyFrame(wx.Frame):
     def ShowAudioDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `ShowDeviceProp' not implemented!"
         #event.skip()
+        
     def ShowDataDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `ShowDeviceProp' not implemented!"
         #event.skip()
@@ -671,14 +672,14 @@ class MyFrame(wx.Frame):
         #event.skip()
     
     def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
-    ''' Used to toggle between burning related & iso related widgets '''
-            if event.GetId() == 101:    ## We are on Data CD Tab
+        ''' Used to toggle between burning related & iso related widgets '''
+        if event.GetId() == 101:    ## We are on Data CD Tab
             ischecked = self.data_onlyiso_check.GetValue()
             self.data_device_list.Enable(not ischecked)
             self.data_speed_list.Enable(not ischecked)
             self.data_devprop_button.Enable(not ischecked)
             self.data_isopath_entry.Enable(ischecked)
-            self.data_isopath_entry.SetValue('Click button to select iso location ...')
+            self.data_isopath_entry.SetValue('Click button to select save iso location')
             self.data_isosel_button.Enable(ischecked)
         elif event.GetId() == 102:  ## We are on Data Dvd Tab
             ischecked = self.dvd_onlyiso_check.GetValue()
@@ -686,13 +687,20 @@ class MyFrame(wx.Frame):
             self.dvd_speed_list.Enable(not ischecked)
             self.dvd_devprop_button.Enable(not ischecked)
             self.dvd_isopath_entry.Enable(ischecked)
-            self.dvd_isopath_entry.SetValue('Click button to select iso location ...')
+            self.dvd_isopath_entry.SetValue('Click button to select save iso location')
             self.dvd_isosel_button.Enable(ischecked)          
                 
             
             
                     #event.skip()
 
+    def SelectDataIsoSaveLocation(self, event):
+        path=fun.SaveIsoDialog()
+        self.data_isopath_entry.SetValue(path)
+    def SelectDvdIsoSaveLocation(self, event):
+        path=fun.SaveIsoDialog()
+        self.dvd_isopath_entry.SetValue(path)            
+        
     def SelectIsoLocation(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `SelectIsoLocation' not implemented!"
         #event.skip()
