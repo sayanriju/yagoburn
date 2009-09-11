@@ -22,7 +22,6 @@ def GetDirectorySize(directory):
 
 def AddFileDialog(header,filters):
 	import wx,os
-	application = wx.PySimpleApp()
 	#filters = 'All files (*.*)|*.*|Text files (*.txt)|*.txt'
 	selected=[]
 	
@@ -36,7 +35,6 @@ def AddFileDialog(header,filters):
 
 def AddDirDialog(header):
 	import wx,os
-	application = wx.PySimpleApp()
 	selected=[]
 	dialog = wx.DirDialog( None, message = header, defaultPath=os.path.expanduser('~/'),  style = wx.OPEN | wx.MULTIPLE )
 	if dialog.ShowModal() == wx.ID_OK:

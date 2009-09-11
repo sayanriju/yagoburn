@@ -14,14 +14,14 @@ CDROOT='/tmp/cdroot'
 
 
 class MyFrame(wx.Frame):
-    def __init__(self, *args, **kwds):
+    def __init__(self):
         self.audio_files_to_burn=[]
         self.data_files_to_burn=[]
         self.dvd_files_to_burn=[]
         
         # begin wxGlade: MyFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
-        wx.Frame.__init__(self, *args, **kwds)
+        #kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        wx.Frame.__init__(self, None, wx.ID_ANY)
         self.notebook_top = wx.Notebook(self, 1, style=wx.NB_LEFT)
         self.other_op_pane = wx.Panel(self.notebook_top, 40)
         self.notebook_other_op = wx.Notebook(self.other_op_pane, -1, style=0)
@@ -486,12 +486,12 @@ class MyFrame(wx.Frame):
     def AddAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
         self.audio_files_to_burn += (fun.AddFileDialog("Select .wav files to add:","Wav files (*.wav)|*.wav|All files (*.*)|*.*"))
         self.UpdateAudioFilesView()
-        event.Skip()
+        #event.skip()
         
     def RemoveAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
         self.audio_files_to_burn.pop(self.audio_file_list.GetSelection())
         self.UpdateAudioFilesView()
-        event.Skip()
+        #event.skip()
 
     def GoToAudioSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
         if event.GetId()==wx.ID_FORWARD:  # Forward Button Pressed
@@ -502,11 +502,11 @@ class MyFrame(wx.Frame):
         fun.ClearCdRoot(CDROOT)   # Clear previous Cdroot, if any
         fun.CreateCdRoot(CDROOT,self.audio_files_to_burn)  # Create new cdroot based on files to burn                
 
-        event.Skip()
+        #event.skip()
         
     def OnBurnAudio(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnBurnAudio' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def UpdateDataFilesView(self):
         ####### remove duplicates from list
@@ -528,23 +528,23 @@ class MyFrame(wx.Frame):
     def AddDataFile(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn += (fun.AddFileDialog("Select  files to add:","All files (*.*)|*.*"))
         self.UpdateDataFilesView()
-        event.Skip()
+        #event.skip()
 
     def AddDataDir(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn.append(fun.AddDirDialog("Select  directories to add:"))
         self.UpdateDataFilesView()        
         print self.data_files_to_burn
-        event.Skip()
+        #event.skip()
 
     def RemoveDataFile(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn.pop(self.data_file_list.GetSelection())
         self.UpdateDataFilesView()        
-        event.Skip()
+        #event.skip()
 
     def ClearDataList(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn=[]
-        self.data_file_list.Clear()
-        event.Skip()
+        self.UpdateDataFilesView()
+        #event.skip()
 
     def GoToDataSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
         if event.GetId()==wx.ID_FORWARD:  # Forward Button Pressed
@@ -555,78 +555,112 @@ class MyFrame(wx.Frame):
         fun.ClearCdRoot(CDROOT)   # Clear previous Cdroot, if any
         fun.CreateCdRoot(CDROOT,self.data_files_to_burn)  # Create new cdroot based on files to burn                
         
-        event.Skip()
+        #event.skip()
         
     def OnBurnData(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnBurnData' not implemented!"
-        event.Skip()
+        #event.skip()
+
+
+    def UpdateDvdFilesView(self):
+        ####### remove duplicates from list
+        self.dvd_files_to_burn=reduce(lambda x,y: x+[y][:1-int(y in x)], self.dvd_files_to_burn, [])
+        ############
+        self.dvd_file_list.Clear()        
+        totalsize=0
+        for f in self.dvd_files_to_burn:
+            if os.path.isdir(f):
+                fsize=fun.GetDirectorySize(f)
+            else:
+                fsize=os.path.getsize(f)
+            self.dvd_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
+            totalsize+=fsize
+        self.dvd_totalsize_entry.SetValue(fun.FormatSize(totalsize))
+        maxsize=int(self.dvd_size_list.GetValue().split(' ')[0])*(1024**2)
+        self.dvd_gauge.SetValue(int(totalsize*100/maxsize))
 
     def AddDvdFile(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `AddDvdFile' not implemented!"
-        event.Skip()
+        self.dvd_files_to_burn += (fun.AddFileDialog("Select  files to add:","All files (*.*)|*.*"))
+        self.UpdateDvdFilesView()
+
+        #event.skip()
 
     def AddDvdDir(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `AddDvdDir' not implemented!"
-        event.Skip()
+        self.dvd_files_to_burn.append(fun.AddDirDialog("Select  directories to add:"))
+        self.UpdateDvdFilesView()        
+        print self.dvd_files_to_burn
+        
+        #event.skip()
 
     def RemoveDvdFile(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `RemoveDvdFile' not implemented!"
-        event.Skip()
+        self.dvd_files_to_burn.pop(self.dvd_file_list.GetSelection())
+        self.UpdateDvdFilesView()        
+        #event.skip()
 
     def ClearDvdList(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ClearDvdList' not implemented!"
-        event.Skip()
+        self.dvd_files_to_burn=[]
+        self.UpdateDvdFilesView()        
+        #event.skip()
 
     def GoToDvdSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `GoToDvdSettingsTab' not implemented!"
-        event.Skip()
+        
+        if event.GetId()==wx.ID_FORWARD:  # Forward Button Pressed
+            self.notebook_data_dvd.SetSelection(1)
+        elif event.GetSelection()==0:     # manual tab change to previous tab; do nothing
+                return
+        ## Do this if forward button pressed OR manual tab change to next tab
+        fun.ClearCdRoot(CDROOT)   # Clear previous Cdroot, if any
+        fun.CreateCdRoot(CDROOT,self.dvd_files_to_burn)  # Create new cdroot based on files to burn                
+                
+        #event.skip()
 
     def OnBurnDvd(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnBurnDvd' not implemented!"
-        event.Skip()
+        #event.skip()
         
     def OnQuickBlankCd(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `QuickBlankCd' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def OnFormatDvd(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnFormatDvd' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def OnFullBlankCd(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnFullBlankCd' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def OnFixateDisk(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnFixateDisk' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def OnBurnIso(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `OnBurnIso' not implemented!"
-        event.Skip()
+        #event.skip()
         
 
     def ShowDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `ShowDeviceProp' not implemented!"
-        event.Skip()
+        #event.skip()
         
     def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `CheckOnlyCreateIso' not implemented!"
-        event.Skip()
+        #event.skip()
 
     def SelectIsoLocation(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `SelectIsoLocation' not implemented!"
-        event.Skip()
+        #event.skip()
         
     def OnQuitProgram(self, event):
 #
-        dlg = wx.MessageDialog(self, "Do you really want to exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
+        dlg = wx.MessageDialog(self, "Want to exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
 #
         if dlg.ShowModal() == wx.ID_YES:
-            fun.ClearCdRoot(CDROOT)
+#
             self.Destroy() # frame
 #
         dlg.Destroy()
+
         
 
 # end of class MyFrame
@@ -635,7 +669,7 @@ class MyFrame(wx.Frame):
 if __name__ == "__main__":
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
-    frame_1 = MyFrame(None, -1, "")
+    frame_1 = MyFrame()
     app.SetTopWindow(frame_1)
     frame_1.Show()
     app.MainLoop()
