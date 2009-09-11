@@ -75,8 +75,13 @@ def ShowGenericMsgDialog(title,type,msg):
 	dialog.Destroy()	
 
 def ShowErrorWithLogDialog(logtext):
+	import wx
 	import customwidgets as cw
-	
+	d=cw.ErrorWithLogDialog(None,-1,'')
+	d.SetLog(logtext)
+	d.ShowModal()
+	d.Destroy()
+		
 	
 def ShowDeviceProp(device):
 	import subprocess as sp
@@ -100,4 +105,8 @@ def CreateCdRoot(CDROOT,lst):
 	os.makedirs(CDROOT)
 	for f in lst:
 		os.system('ln -s {0} {1}/'.format(f,CDROOT))
-		
+
+import wx
+app=wx.App()
+ShowErrorWithLogDialog('bababab')
+app.MainLoop()
