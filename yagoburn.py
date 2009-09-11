@@ -652,23 +652,43 @@ class MyFrame(wx.Frame):
         
 
     def ShowAudioDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ShowDeviceProp' not implemented!"
+        device=self.audio_device_list.GetValue()
+        if device == '':
+            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+        else:
+            fun.ShowDeviceProp(device)
         #event.skip()
         
     def ShowDataDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ShowDeviceProp' not implemented!"
+        device=self.data_device_list.GetValue()
+        if device == '':
+            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+        else:
+            fun.ShowDeviceProp(device)
         #event.skip()
 
     def ShowDvdDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ShowDeviceProp' not implemented!"
+        device=self.dvd_device_list.GetValue()
+        if device == '':
+            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+        else:
+            fun.ShowDeviceProp(device)        
         #event.skip()
         
     def ShowFormatDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ShowDeviceProp' not implemented!"
+        device=self.format_device_list.GetValue()
+        if device == '':
+            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+        else:
+            fun.ShowDeviceProp(device)        
         #event.skip()
     
     def ShowBurnisoDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `ShowDeviceProp' not implemented!"
+        device=self.burniso_device_list.GetValue()
+        if device == '':
+            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+        else:
+            fun.ShowDeviceProp(device)        
         #event.skip()
     
     def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
@@ -678,9 +698,12 @@ class MyFrame(wx.Frame):
             self.data_device_list.Enable(not ischecked)
             self.data_speed_list.Enable(not ischecked)
             self.data_devprop_button.Enable(not ischecked)
+            self.data_mode_radiobox.Enable(not ischecked)
             self.data_isopath_entry.Enable(ischecked)
             self.data_isopath_entry.SetValue('Click button to select save iso location')
             self.data_isosel_button.Enable(ischecked)
+            self.data_simulate_check.Enable(not ischecked)
+            self.data_nofix_check.Enable(not ischecked)
         elif event.GetId() == 102:  ## We are on Data Dvd Tab
             ischecked = self.dvd_onlyiso_check.GetValue()
             self.dvd_device_list.Enable(not ischecked)
@@ -688,11 +711,10 @@ class MyFrame(wx.Frame):
             self.dvd_devprop_button.Enable(not ischecked)
             self.dvd_isopath_entry.Enable(ischecked)
             self.dvd_isopath_entry.SetValue('Click button to select save iso location')
-            self.dvd_isosel_button.Enable(ischecked)          
-                
-            
-            
-                    #event.skip()
+            self.dvd_isosel_button.Enable(ischecked) 
+            self.dvd_simulate_check.Enable(not ischecked)
+            self.dvd_nofix_check.Enable(not ischecked)            
+            #event.skip()
 
     def SelectDataIsoSaveLocation(self, event):
         path=fun.SaveIsoDialog()
@@ -702,7 +724,7 @@ class MyFrame(wx.Frame):
         self.dvd_isopath_entry.SetValue(path)            
         
     def SelectIsoLocation(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `SelectIsoLocation' not implemented!"
+        fun.AddFileDialog('Select Iso file to burn : ','Iso files (*.iso)|*.iso|All files (*.*)|*.*')
         #event.skip()
         
     def OnQuitProgram(self, event):

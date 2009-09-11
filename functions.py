@@ -61,11 +61,36 @@ def SaveIsoDialog():
 	if not fnmatch.fnmatch(selected,'*.iso'):
 		selected += '.iso'
 		
-	return selected		
+	return selected	
+	
+def ShowGenericMsgDialog(title,type,msg):
+	''' Shows a generic wx dialog
+	 type is either 'error' or 'info' '''
+	import wx
+	if type == 'info':
+		dialog = wx.MessageDialog(None, msg, title, wx.OK | wx.ICON_INFORMATION)
+	elif type == 'error':
+		dialog = wx.MessageDialog(None, msg, title,wx.OK | wx.ICON_ERROR)
+	dialog.ShowModal()
+	dialog.Destroy()	
 
+def ShowErrorWithLogDialog(logtext):
+	import customwidgets as cw
+	
+	
 def ShowDeviceProp(device):
-	pass
-
+	import subprocess as sp
+	proc=sp.Popen(['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive'],stdout=sp.PIPE,stderr=sp.PIPE)
+	exitcode=proc.wait()
+	print exitcode
+	if exitcode == 0:
+		ShowGenericMsgDialog('Properties for {0}'.format(device),'info',proc.communicate()[0])
+	else:
+		ShowGenericMsgDialog('Properties for {0}'.format(device),'error',proc.communicate()[1])
+	
+	return
+		
+		
 def ClearCdRoot(CDROOT):
 	import os
 	os.system('rm -rf {0}'.format(CDROOT))
