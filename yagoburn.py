@@ -8,6 +8,18 @@ import functions as fun
 
 CDROOT='/tmp/cdroot'
 
+write_speeds=['Default Speed']
+for i in range(52,1,-2):
+    write_speeds.append("{0}x".format(i))
+
+dvd_devices=[]
+cd_devices=[]
+for d in os.listdir('/dev/'):
+    if fnmatch.fnmatch(d,'*dvdr*'):
+        dvd_devices.append("/dev/"+d)
+    elif fnmatch.fnmatch(d,'*cdr*'):
+        cd_devices.append("/dev/"+d)
+
 # begin wxGlade: extracode
 # end wxGlade
 
@@ -52,10 +64,10 @@ class MyFrame(wx.Frame):
         self.panel_3 = wx.Panel(self.audio_cd, -1)
         self.audio_next_button = wx.Button(self.audio_cd, wx.ID_FORWARD, "")
         self.label_device_1 = wx.StaticText(self.audio_cd_settings, -1, "Device to write : ", style=wx.ST_NO_AUTORESIZE)
-        self.audio_device_list = wx.ComboBox(self.audio_cd_settings, -1, choices=["/dev/cdrw", "/dev/cdrw1"], style=wx.CB_DROPDOWN)
+        self.audio_device_list = wx.ComboBox(self.audio_cd_settings, -1, choices=cd_devices, style=wx.CB_DROPDOWN)
         self.audio_devprop_button = wx.Button(self.audio_cd_settings, wx.ID_PROPERTIES, "")
         self.label_speed_1 = wx.StaticText(self.audio_cd_settings, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
-        self.audio_speed_list = wx.ComboBox(self.audio_cd_settings, -1, choices=["Default Speed"], style=wx.CB_DROPDOWN)
+        self.audio_speed_list = wx.ComboBox(self.audio_cd_settings, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
         self.audio_mode_radiobox = wx.RadioBox(self.audio_cd_settings, -1, "Write Mode : ", choices=["DAO (No pause between tracks)", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
         self.audio_simulate_check = wx.CheckBox(self.audio_cd_settings, -1, "Simulate Write")
         self.audio_nofix_check = wx.CheckBox(self.audio_cd_settings, -1, "Do NOT Fixate CD")
@@ -77,12 +89,12 @@ class MyFrame(wx.Frame):
         self.data_volume_label = wx.StaticText(self.data_cd_settings, -1, "Volume Name :      ", style=wx.ST_NO_AUTORESIZE)
         self.data_volname_entry = wx.TextCtrl(self.data_cd_settings, -1, "Yagoburn CD")
         self.label_2_copy_1 = wx.StaticText(self.data_cd_settings, -1, "Device to write : ", style=wx.ST_NO_AUTORESIZE)
-        self.data_device_list = wx.ComboBox(self.data_cd_settings, -1, choices=["/dev/cdrw", "/dev/cdrw1"], style=wx.CB_DROPDOWN)
+        self.data_device_list = wx.ComboBox(self.data_cd_settings, -1, choices=cd_devices, style=wx.CB_DROPDOWN)
         self.data_devprop_button = wx.Button(self.data_cd_settings, wx.ID_PROPERTIES, "")
         self.label_2_copy_copy = wx.StaticText(self.data_cd_settings, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
-        self.data_speed_list = wx.ComboBox(self.data_cd_settings, -1, choices=["Default Speed"], style=wx.CB_DROPDOWN)
+        self.data_speed_list = wx.ComboBox(self.data_cd_settings, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
         self.data_mode_radiobox = wx.RadioBox(self.data_cd_settings, -1, "Write Mode : ", choices=["DAO", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
-        self.data_onlyiso_check = wx.CheckBox(self.data_cd_settings, -1, "Only create ISO file")
+        self.data_onlyiso_check = wx.CheckBox(self.data_cd_settings, 101, "Only create ISO file")
         self.data_isopath_entry = wx.TextCtrl(self.data_cd_settings, -1, "")
         self.data_isosel_button = wx.Button(self.data_cd_settings, wx.ID_OPEN, "")
         self.data_multi_check = wx.CheckBox(self.data_cd_settings, -1, "Start or Continue Multi-session")
@@ -105,11 +117,11 @@ class MyFrame(wx.Frame):
         self.dvd_volname_label = wx.StaticText(self.data_dvd_settings, -1, "Volume Name :      ", style=wx.ST_NO_AUTORESIZE)
         self.dvd_volname_entry = wx.TextCtrl(self.data_dvd_settings, -1, "Yagoburn DVD")
         self.label_2_copy_1_copy = wx.StaticText(self.data_dvd_settings, -1, "Device to write : ", style=wx.ST_NO_AUTORESIZE)
-        self.dvd_device_list = wx.ComboBox(self.data_dvd_settings, -1, choices=["/dev/dvdrw", "/dev/dvdrw1"], style=wx.CB_DROPDOWN)
+        self.dvd_device_list = wx.ComboBox(self.data_dvd_settings, -1, choices=dvd_devices, style=wx.CB_DROPDOWN)
         self.dvd_devprop_button = wx.Button(self.data_dvd_settings, wx.ID_PROPERTIES, "")
         self.dvd_label_2 = wx.StaticText(self.data_dvd_settings, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
-        self.dvd_speed_list = wx.ComboBox(self.data_dvd_settings, -1, choices=["Default Speed"], style=wx.CB_DROPDOWN)
-        self.dvd_onlyiso_check = wx.CheckBox(self.data_dvd_settings, -1, "Only create ISO file")
+        self.dvd_speed_list = wx.ComboBox(self.data_dvd_settings, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
+        self.dvd_onlyiso_check = wx.CheckBox(self.data_dvd_settings, 102, "Only create ISO file")
         self.dvd_isopath_entry = wx.TextCtrl(self.data_dvd_settings, -1, "")
         self.dvd_isosel_button = wx.Button(self.data_dvd_settings, wx.ID_OPEN, "")
         self.dvd_multi_check = wx.CheckBox(self.data_dvd_settings, -1, "Start or Continue Multi-session")
@@ -119,7 +131,7 @@ class MyFrame(wx.Frame):
         self.dvd_burn_button = wx.BitmapButton(self.data_dvd_settings, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
         self.panel_4_copy_copy = wx.Panel(self.data_dvd_settings, -1)
         self.label_device_1_copy = wx.StaticText(self.blank_disk, -1, "Target Device : ", style=wx.ST_NO_AUTORESIZE)
-        self.format_device_list = wx.ComboBox(self.blank_disk, -1, choices=["/dev/cdrw", "/dev/cdrw1"], style=wx.CB_DROPDOWN)
+        self.format_device_list = wx.ComboBox(self.blank_disk, -1, choices=cd_devices+dvd_devices, style=wx.CB_DROPDOWN)
         self.format_devprop_button = wx.Button(self.blank_disk, wx.ID_PROPERTIES, "")
         self.quickblankcd_button_copy = wx.Button(self.blank_disk, -1, "Quick Blank CDRW")
         self.formatdvd_button_copy = wx.Button(self.blank_disk, -1, "Format DVDRW")
@@ -129,10 +141,10 @@ class MyFrame(wx.Frame):
         self.burn_isopath_entry = wx.TextCtrl(self.burn_iso, -1, "")
         self.burn_isosel_button = wx.Button(self.burn_iso, wx.ID_OPEN, "")
         self.label_2_copy_1_copy_1 = wx.StaticText(self.burn_iso, -1, "Device to write : ", style=wx.ST_NO_AUTORESIZE)
-        self.burniso_device_list = wx.ComboBox(self.burn_iso, -1, choices=["/dev/cdrw", "/dev/cdrw1"], style=wx.CB_DROPDOWN)
+        self.burniso_device_list = wx.ComboBox(self.burn_iso, -1, choices=cd_devices+dvd_devices, style=wx.CB_DROPDOWN)
         self.burniso_devprop_button = wx.Button(self.burn_iso, wx.ID_PROPERTIES, "")
         self.label_2_copy_copy_copy = wx.StaticText(self.burn_iso, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
-        self.burniso_speed_list = wx.ComboBox(self.burn_iso, -1, choices=["Default Speed"], style=wx.CB_DROPDOWN)
+        self.burniso_speed_list = wx.ComboBox(self.burn_iso, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
         self.burniso_mode_radiobox = wx.RadioBox(self.burn_iso, -1, "Write Mode : ", choices=["DAO", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
         self.burniso_multi_check = wx.CheckBox(self.burn_iso, -1, "Start or Continue Multi-session")
         self.burniso_simulate_check = wx.CheckBox(self.burn_iso, -1, "Simulate Write")
@@ -147,14 +159,14 @@ class MyFrame(wx.Frame):
         self.add_track_button.Bind(wx.EVT_BUTTON, self.AddAudioTrack)
         self.remove_track_button.Bind(wx.EVT_BUTTON, self.RemoveAudioTrack)
         self.audio_next_button.Bind(wx.EVT_BUTTON, self.GoToAudioSettingsTab)
-        self.audio_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
+        self.audio_devprop_button.Bind(wx.EVT_BUTTON, self.ShowAudioDeviceProp)
         self.audio_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnAudio)
         self.data_addfile_button.Bind(wx.EVT_BUTTON, self.AddDataFile)
         self.data_adddir_button.Bind(wx.EVT_BUTTON, self.AddDataDir)
         self.data_remove_button.Bind(wx.EVT_BUTTON, self.RemoveDataFile)
         self.data_clear_button.Bind(wx.EVT_BUTTON, self.ClearDataList)
         self.data_next_button.Bind(wx.EVT_BUTTON, self.GoToDataSettingsTab)
-        self.data_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
+        self.data_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDataDeviceProp)
         self.data_onlyiso_check.Bind(wx.EVT_CHECKBOX, self.CheckOnlyCreateIso)
         self.data_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
         self.data_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnData)
@@ -163,17 +175,17 @@ class MyFrame(wx.Frame):
         self.dvd_remove_button.Bind(wx.EVT_BUTTON, self.RemoveDvdFile)
         self.dvd_clear_button.Bind(wx.EVT_BUTTON, self.ClearDvdList)
         self.dvd_next_button.Bind(wx.EVT_BUTTON, self.GoToDvdSettingsTab)
-        self.dvd_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
+        self.dvd_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDvdDeviceProp)
         self.dvd_onlyiso_check.Bind(wx.EVT_CHECKBOX, self.CheckOnlyCreateIso)
         self.dvd_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
         self.dvd_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnDvd)
-        self.format_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
+        self.format_devprop_button.Bind(wx.EVT_BUTTON, self.ShowFormatDeviceProp)
         self.quickblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnQuickBlankCd)
         self.formatdvd_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatDvd)
         self.fullblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnFullBlankCd)
         self.justfixate_button_copy.Bind(wx.EVT_BUTTON, self.OnFixateDisk)
         self.burn_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
-        self.burniso_devprop_button.Bind(wx.EVT_BUTTON, self.ShowDeviceProp)
+        self.burniso_devprop_button.Bind(wx.EVT_BUTTON, self.ShowBurnisoDeviceProp)
         self.burniso_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnIso)
         
         self.notebook_audio_cd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToAudioSettingsTab)
@@ -639,29 +651,58 @@ class MyFrame(wx.Frame):
         #event.skip()
         
 
-    def ShowDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
+    def ShowAudioDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
+        print "Event handler `ShowDeviceProp' not implemented!"
+        #event.skip()
+    def ShowDataDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
+        print "Event handler `ShowDeviceProp' not implemented!"
+        #event.skip()
+
+    def ShowDvdDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `ShowDeviceProp' not implemented!"
         #event.skip()
         
-    def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `CheckOnlyCreateIso' not implemented!"
+    def ShowFormatDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
+        print "Event handler `ShowDeviceProp' not implemented!"
         #event.skip()
+    
+    def ShowBurnisoDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
+        print "Event handler `ShowDeviceProp' not implemented!"
+        #event.skip()
+    
+    def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
+    ''' Used to toggle between burning related & iso related widgets '''
+            if event.GetId() == 101:    ## We are on Data CD Tab
+            ischecked = self.data_onlyiso_check.GetValue()
+            self.data_device_list.Enable(not ischecked)
+            self.data_speed_list.Enable(not ischecked)
+            self.data_devprop_button.Enable(not ischecked)
+            self.data_isopath_entry.Enable(ischecked)
+            self.data_isopath_entry.SetValue('Click button to select iso location ...')
+            self.data_isosel_button.Enable(ischecked)
+        elif event.GetId() == 102:  ## We are on Data Dvd Tab
+            ischecked = self.dvd_onlyiso_check.GetValue()
+            self.dvd_device_list.Enable(not ischecked)
+            self.dvd_speed_list.Enable(not ischecked)
+            self.dvd_devprop_button.Enable(not ischecked)
+            self.dvd_isopath_entry.Enable(ischecked)
+            self.dvd_isopath_entry.SetValue('Click button to select iso location ...')
+            self.dvd_isosel_button.Enable(ischecked)          
+                
+            
+            
+                    #event.skip()
 
     def SelectIsoLocation(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `SelectIsoLocation' not implemented!"
         #event.skip()
         
     def OnQuitProgram(self, event):
-#
-        dlg = wx.MessageDialog(self, "Want to exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
-#
+        dlg = wx.MessageDialog(self, "Are you sure you want to Exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
         if dlg.ShowModal() == wx.ID_YES:
-#
             self.Destroy() # frame
-#
         dlg.Destroy()
-
-        
+                
 
 # end of class MyFrame
 

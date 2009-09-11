@@ -25,7 +25,7 @@ def AddFileDialog(header,filters):
 	#filters = 'All files (*.*)|*.*|Text files (*.txt)|*.txt'
 	selected=[]
 	
-	dialog = wx.FileDialog ( None, message = header, defaultDir=os.path.expanduser('~/'),  wildcard = filters, style = wx.OPEN | wx.MULTIPLE )
+	dialog = wx.FileDialog ( None, message = header, defaultDir=os.path.expanduser('~/'),  wildcard = filters, style = wx.FD_OPEN | wx.FD_MULTIPLE )
 	
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPaths()
@@ -36,12 +36,25 @@ def AddFileDialog(header,filters):
 def AddDirDialog(header):
 	import wx,os
 	selected=[]
-	dialog = wx.DirDialog( None, message = header, defaultPath=os.path.expanduser('~/'),  style = wx.OPEN | wx.MULTIPLE )
+	dialog = wx.DirDialog( None, message = header, defaultPath=os.path.expanduser('~/'),  style = wx.FD_OPEN | wx.FD_MULTIPLE )
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPath()
 	dialog.Destroy()
 	
 	return selected	
+
+def SaveIsoDialog():
+	import wx,os,fnmatch
+	app=wx.PySimpleApp()
+	dialog = wx.FileDialog( None, message = 'Select location to save iso file:', wildcard="ISO Files (*.iso)|*.iso", defaultDir=os.path.expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
+	if dialog.ShowModal() == wx.ID_OK:
+		selected = dialog.GetPath()
+	dialog.Destroy()
+	if not fnmatch.fnmatch(selected,'*.iso'):
+		selected += '.iso'
+		
+	return selected		
+	
 
 def ClearCdRoot(CDROOT):
 	import os
@@ -53,4 +66,3 @@ def CreateCdRoot(CDROOT,lst):
 	for f in lst:
 		os.system('ln -s {0} {1}/'.format(f,CDROOT))
 		
-
