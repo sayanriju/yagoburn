@@ -77,13 +77,16 @@ def ShowGenericMsgDialog(title,type,msg):
 def ShowErrorWithLogDialog(logtext):
 	import wx
 	import customwidgets as cw
-	d=cw.ErrorWithLogDialog(None,-1,'')
+	d=cw.MsgWithLogDialog('Error!','Something went wrong!','(Viewing the logs below might be helpful)','icons/errormsg.png', None,-1,'')
 	d.SetLog(logtext)
 	d.ShowModal()
 	d.Destroy()
 		
 	
 def ShowDeviceProp(device):
+	if device=='':
+		ShowGenericMsgDialog('Error!','error','Choose a device first!')
+		return
 	import subprocess as sp
 	proc=sp.Popen(['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive'],stdout=sp.PIPE,stderr=sp.PIPE)
 	exitcode=proc.wait()
@@ -91,7 +94,8 @@ def ShowDeviceProp(device):
 	if exitcode == 0:
 		ShowGenericMsgDialog('Properties for {0}'.format(device),'info',proc.communicate()[0])
 	else:
-		ShowGenericMsgDialog('Properties for {0}'.format(device),'error',proc.communicate()[1])
+		#ShowGenericMsgDialog('Properties for {0}'.format(device),'error',proc.communicate()[1])
+		ShowErrorWithLogDialog(proc.communicate()[1])
 	
 	return
 		
@@ -106,7 +110,7 @@ def CreateCdRoot(CDROOT,lst):
 	for f in lst:
 		os.system('ln -s {0} {1}/'.format(f,CDROOT))
 
-import wx
-app=wx.App()
-ShowErrorWithLogDialog('bababab')
-app.MainLoop()
+#import wx
+#app=wx.App()
+#ShowErrorWithLogDialog('bababab')
+#app.MainLoop()

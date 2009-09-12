@@ -2,13 +2,18 @@
 # -*- coding: utf-8 -*-
 import wx
 
-class ErrorWithLogDialog(wx.Dialog):
-    def __init__(self, *args, **kwds):
+class MsgWithLogDialog(wx.Dialog):
+    def __init__(self,  *args, **kwds):
+        self.title=args[0]
+        heading=args[1]
+        msg=args[2]
+        icon=args[3]
+        args=args[4:-1]
         kwds["style"] = wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
-        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("icons/errormsg.png", wx.BITMAP_TYPE_ANY))
-        self.label_1 = wx.StaticText(self, -1, "Something went wrong!", style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
-        self.label_2 = wx.StaticText(self, -1, "(Viewing the logs below might be helpful)", style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
+        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap(icon, wx.BITMAP_TYPE_ANY))
+        self.label_1 = wx.StaticText(self, -1, heading, style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
+        self.label_2 = wx.StaticText(self, -1, msg, style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
         self.text_ctrl_1 = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL|wx.TE_LINEWRAP)
         self.button_1 = wx.Button(self, wx.ID_SAVE, "")
         self.button_2 = wx.Button(self, wx.ID_CLOSE, "")
@@ -20,12 +25,9 @@ class ErrorWithLogDialog(wx.Dialog):
         self.button_2.Bind(wx.EVT_BUTTON,self.OnClose)
 
     def __set_properties(self):
-        self.SetTitle("Error!")
+        self.SetTitle(self.title)
         self.label_1.SetFont(wx.Font(15, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.text_ctrl_1.SetMinSize((386, 200))
-        #####################################
-        self.text_ctrl_1.SetValue('xxxxxxx')
-        ##################################33
         self.button_1.SetToolTipString("Save this log")
 
     def __do_layout(self):
@@ -58,3 +60,10 @@ class ErrorWithLogDialog(wx.Dialog):
     def SetLog(self, txt):
         self.text_ctrl_1.SetValue(txt)
         
+
+#
+#import wx        
+#app=wx.App()
+#d=MsgWithLogDialog('title','heading','msg\nmsg','icons/errormsg.png',None,-1,'')
+#d.ShowModal()
+#app.MainLoop()

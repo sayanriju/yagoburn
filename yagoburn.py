@@ -652,43 +652,23 @@ class MyFrame(wx.Frame):
         
 
     def ShowAudioDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        device=self.audio_device_list.GetValue()
-        if device == '':
-            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
-        else:
-            fun.ShowDeviceProp(device)
+        fun.ShowDeviceProp(self.audio_device_list.GetValue())
         #event.skip()
         
     def ShowDataDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        device=self.data_device_list.GetValue()
-        if device == '':
-            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
-        else:
-            fun.ShowDeviceProp(device)
+        fun.ShowDeviceProp(self.data_device_list.GetValue())
         #event.skip()
 
     def ShowDvdDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        device=self.dvd_device_list.GetValue()
-        if device == '':
-            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
-        else:
-            fun.ShowDeviceProp(device)        
+        fun.ShowDeviceProp(self.dvd_device_list.GetValue())        
         #event.skip()
         
     def ShowFormatDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        device=self.format_device_list.GetValue()
-        if device == '':
-            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
-        else:
-            fun.ShowDeviceProp(device)        
+        fun.ShowDeviceProp(self.format_device_list.GetValue())        
         #event.skip()
     
     def ShowBurnisoDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
-        device=self.burniso_device_list.GetValue()
-        if device == '':
-            fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
-        else:
-            fun.ShowDeviceProp(device)        
+        fun.ShowDeviceProp(self.burniso_device_list.GetValue())        
         #event.skip()
     
     def CheckOnlyCreateIso(self, event): # wxGlade: MyFrame.<event_handler>
