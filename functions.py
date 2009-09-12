@@ -102,7 +102,7 @@ def ShowDeviceProp(device):
 	import subprocess as sp
 	proc=sp.Popen(['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive'],stdout=sp.PIPE,stderr=sp.PIPE)
 	exitcode=proc.wait()
-	print exitcode
+	#print exitcode
 	if exitcode == 0:
 		ShowGenericMsgDialog('Properties for {0}'.format(device),'info',proc.communicate()[0])
 	else:
@@ -122,7 +122,21 @@ def CreateCdRoot(CDROOT,lst):
 	for f in lst:
 		os.system('ln -s {0} {1}/'.format(f,CDROOT))
 
-#import wx
-#app=wx.App()
-#ShowErrorWithLogDialog('bababab')
-#app.MainLoop()
+def RunCommand(cmd):
+	''' Used to actually run a command using the WIPDialog Class, and return the errorcode and appropriate logs '''
+	from customwidgets  import WIPDialog
+	d=WIPDialog(cmd,None,-1,'')
+	d.ShowModal()
+	exitcode=d.exitcode
+	errorlog=d.errorlog
+	successlog=d.successlog
+	d.Destroy()
+	
+	return exitcode, errorlog, successlog
+
+
+
+import wx
+app=wx.App()
+RunCommand('sleep 3')
+app.MainLoop()
