@@ -49,7 +49,19 @@ class MsgWithLogDialog(wx.Dialog):
         self.Layout()
         
     def OnSave(self, event):
-        pass
+        from os.path import expanduser
+        dialog = wx.FileDialog( None, message = 'Select location to save this log:', wildcard="Any File (*.*) | *.*", defaultDir=expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
+        if dialog.ShowModal() == wx.ID_OK:
+            selected = dialog.GetPath()
+        dialog.Destroy()     
+        try:
+            f = open(selected, 'w') 
+            f.write(self.text_ctrl_1.GetValue())
+            f.close()
+        except IOError:
+            dial=wx.MessageDialog(None, "Unable to save file on location {0}\n\nCheck  permissons!'".format(selected[0]), 'Error Saving File!', wx.OK | wx.ICON_ERROR)
+            dial.ShowModal()
+            dial.Destroy()
     
     def OnClose(self, event):
         self.Close()

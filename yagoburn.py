@@ -548,7 +548,12 @@ class MyFrame(wx.Frame):
             totalsize+=fsize
         self.data_totalsize_entry.SetValue(fun.FormatSize(totalsize))
         maxsize=int(self.data_size_list.GetValue().split(' ')[0])*(1024**2)
-        self.data_gauge.SetValue(int(totalsize*100/maxsize))
+        if totalsize<=maxsize:
+            self.data_gauge.SetValue(int(totalsize*100/maxsize))
+        else:
+            self.data_gauge.SetValue(100)
+            
+                
         
     def AddDataFile(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn += (fun.AddFileDialog("Select  files to add:","All files (*.*)|*.*"))
