@@ -3,7 +3,10 @@
 import wx
 
 class WIPDialog(wx.Dialog):
-	''' A Class to both run a command and show a dialog while it runs; "returns" exitcode, errolog and successlog '''
+	''' A Class to both run a command and show a dialog while it runs; "returns" exitcode, errolog and successlog 
+	exitcode=0 on success, 1 on failure, -1 on forced kill
+	errorlog='' on succes, the actual log on failure, '' on forced kill
+	successlog= the actual log on success, '' on failure and forced kill '''
 	def __init__(self, *args, **kwds):
 		self.cmd=args[0]
 		args=args[1:-1]
@@ -18,7 +21,7 @@ class WIPDialog(wx.Dialog):
 		wx.Dialog.__init__(self, *args, **kwds)
 		self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("icons/wip.png", wx.BITMAP_TYPE_ANY))
 		self.label_1 = wx.StaticText(self, -1, "Please wait a little more...  ", style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
-		self.label_2 = wx.StaticText(self, -1, "<<<>>>", style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
+		self.label_2 = wx.StaticText(self, -1, "Now running command: \"{0}\"".format(self.cmd), style=wx.ALIGN_CENTRE|wx.ST_NO_AUTORESIZE)
 		self.bar = wx.Gauge(self, -1, 100, style=wx.GA_HORIZONTAL|wx.GA_SMOOTH)
 		self.button_1 = wx.Button(self, wx.ID_STOP, "")
 
@@ -72,26 +75,29 @@ class WIPDialog(wx.Dialog):
 				try:
 					self.errorlog=self.proc.communicate()[1]
 				except ValueError:
-					pass		## Why does it raise a Value Error here????
+					pass		## Why does it sometimes raise a Value Error here????
 			else:
 				self.exitcode=0
 				try:
 					self.successlog=self.proc.communicate()[0]
 				except ValueError:
-					pass		## Why does it raise a Value Error here????
+					pass		## Why does it sometimes raise a Value Error here????
 			self.Close()
 				
 	
 	
 	def OnStop(self,event):
+		d=wx.MessageDialog(None, "Are you sure you want to stop the process  \"{0}\" running with PID {1}?\n\n(It is still running in the background while you decide!)".format(self.cmd,self.proc.pid),'Confirm Kill', wx.YES_NO|wx.ICON_QUESTION)
+		if d.ShowModal()== wx.ID_YES:
+			self.proc.kill()
+		d.Destroy()
+		self.exitcode=-1
 		self.Close()
 	
 	def RunCommand(self):
 		cmdlist=self.cmd.split(' ')
 		from subprocess import Popen,PIPE
 		self.proc=Popen(cmdlist,stdout=PIPE,stderr=PIPE)
-		#proc.wait()
-		#print 'DONE'
 
 # end of class MyDialog
 
@@ -166,13 +172,4 @@ class MsgWithLogDialog(wx.Dialog):
 	
 	def SetLog(self, txt):
 		self.text_ctrl_1.SetValue(txt)
-#        
-#
-##
-#import wx        
-#app=wx.App()
-#d=WIPDialog('seq 1 5',None,-1,'')
-#d.ShowModal()
-#print d.successlog,'**'
-#d.Destroy()
 
