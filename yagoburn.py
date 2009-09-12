@@ -574,6 +574,7 @@ class MyFrame(wx.Frame):
     def ClearDataList(self, event): # wxGlade: MyFrame.<event_handler>
         self.data_files_to_burn=[]
         self.UpdateDataFilesView()
+        fun.ClearCdRoot(CDROOT)
         #event.skip()
 
     def GoToDataSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
@@ -629,7 +630,8 @@ class MyFrame(wx.Frame):
 
     def ClearDvdList(self, event): # wxGlade: MyFrame.<event_handler>
         self.dvd_files_to_burn=[]
-        self.UpdateDvdFilesView()        
+        self.UpdateDvdFilesView() 
+        fun.ClearCdRoot(CDROOT)       
         #event.skip()
 
     def GoToDvdSettingsTab(self, event): # wxGlade: MyFrame.<event_handler>
