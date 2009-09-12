@@ -134,9 +134,3 @@ def RunCommand(cmd):
 	
 	return exitcode, errorlog, successlog
 
-
-
-import wx
-app=wx.App()
-RunCommand('sleep 3')
-app.MainLoop()
