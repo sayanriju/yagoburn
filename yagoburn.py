@@ -57,7 +57,7 @@ class MyFrame(wx.Frame):
         self.audio_file_list = wx.ListBox(self.audio_cd, -1, choices=[])
         self.audio_totalsize_entry = wx.TextCtrl(self.audio_cd, -1, "", style=wx.TE_READONLY)
         self.audio_gauge = wx.Gauge(self.audio_cd, -1, 100)
-        self.audio_size_list = wx.ComboBox(self.audio_cd, -1, choices=["180 MB", "202 MB", "650 MB", "700 MB", "790 MB", "869 MB", "878 MB"], style=wx.CB_DROPDOWN|wx.CB_SORT)
+        self.audio_size_list = wx.ComboBox(self.audio_cd, 201, choices=["180 MB", "202 MB", "650 MB", "700 MB", "790 MB", "869 MB", "878 MB"], style=wx.CB_DROPDOWN|wx.CB_SORT|wx.CB_READONLY)
         self.panel_2 = wx.Panel(self.audio_cd, -1)
         self.add_track_button = wx.Button(self.audio_cd, wx.ID_ADD, "")
         self.remove_track_button = wx.Button(self.audio_cd, wx.ID_REMOVE, "")
@@ -77,7 +77,7 @@ class MyFrame(wx.Frame):
         self.data_file_list = wx.ListBox(self.data_cd, -1, choices=[])
         self.data_totalsize_entry = wx.TextCtrl(self.data_cd, -1, "", style=wx.TE_READONLY)
         self.data_gauge = wx.Gauge(self.data_cd, -1, 100)
-        self.data_size_list = wx.ComboBox(self.data_cd, -1, choices=["180 MB", "202 MB", "650 MB", "700 MB", "790 MB", "869 MB", "878 MB"], style=wx.CB_DROPDOWN|wx.CB_SORT)
+        self.data_size_list = wx.ComboBox(self.data_cd, 202, choices=["180 MB", "202 MB", "650 MB", "700 MB", "790 MB", "869 MB", "878 MB"], style=wx.CB_DROPDOWN|wx.CB_SORT|wx.CB_READONLY)
         self.panel_6 = wx.Panel(self.data_cd, -1)
         self.data_addfile_button = wx.Button(self.data_cd, wx.ID_ADD, "")
         self.data_adddir_button = wx.Button(self.data_cd, wx.ID_ADD, "Add Directory")
@@ -106,7 +106,7 @@ class MyFrame(wx.Frame):
         self.dvd_file_list = wx.ListBox(self.data_dvd, -1, choices=[])
         self.dvd_totalsize_entry = wx.TextCtrl(self.data_dvd, -1, "", style=wx.TE_READONLY)
         self.dvd_gauge = wx.Gauge(self.data_dvd, -1, 100)
-        self.dvd_size_list = wx.ComboBox(self.data_dvd, -1, choices=["4.7 GB", "8.5 GB", "9.4 GB"], style=wx.CB_DROPDOWN|wx.CB_SORT)
+        self.dvd_size_list = wx.ComboBox(self.data_dvd, 203, choices=["4.7 GB", "8.5 GB", "9.4 GB"], style=wx.CB_DROPDOWN|wx.CB_SORT|wx.CB_READONLY)
         self.panel_6_copy = wx.Panel(self.data_dvd, -1)
         self.dvd_addfile_button = wx.Button(self.data_dvd, wx.ID_ADD, "")
         self.dvd_adddir_button = wx.Button(self.data_dvd, wx.ID_ADD, "Add Directory")
@@ -155,7 +155,8 @@ class MyFrame(wx.Frame):
 
         self.__set_properties()
         self.__do_layout()
-
+        
+########## Event Bindings ###############
         self.add_track_button.Bind(wx.EVT_BUTTON, self.AddAudioTrack)
         self.remove_track_button.Bind(wx.EVT_BUTTON, self.RemoveAudioTrack)
         self.audio_next_button.Bind(wx.EVT_BUTTON, self.GoToAudioSettingsTab)
@@ -188,6 +189,9 @@ class MyFrame(wx.Frame):
         self.burniso_devprop_button.Bind(wx.EVT_BUTTON, self.ShowBurnisoDeviceProp)
         self.burniso_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnIso)
         
+        self.audio_size_list.Bind(wx.EVT_COMBOBOX, self.OnNewSizeSelect)
+        self.data_size_list.Bind(wx.EVT_COMBOBOX, self.OnNewSizeSelect)
+        self.dvd_size_list.Bind(wx.EVT_COMBOBOX, self.OnNewSizeSelect)
         self.notebook_audio_cd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToAudioSettingsTab)
         self.notebook_data_cd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToDataSettingsTab)
         self.notebook_data_dvd.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.GoToDvdSettingsTab)
@@ -480,6 +484,15 @@ class MyFrame(wx.Frame):
         # end wxGlade
 
 ## Callback Handler defintions
+    def OnNewSizeSelect(self, event):
+        eid=event.GetId()
+        if eid==201:
+            self.UpdateAudioFilesView()
+        elif eid==202:
+            self.UpdateDataFilesView()
+        elif eid==203:
+            self.UpdateDvdFilesView()
+
     def UpdateAudioFilesView(self):
         ####### remove duplicates from list
         self.audio_files_to_burn=reduce(lambda x,y: x+[y][:1-int(y in x)], self.audio_files_to_burn, [])

@@ -12,20 +12,21 @@ def FormatSize(size):
 		return "{0:.2f} GB".format(size/(1024.0**3))
 	
 def GetDirectorySize(directory):
-	import os
+	from os import walk,path
 	dir_size = 0
-	for (path, dirs, files) in os.walk(directory):
+	for (paths, dirs, files) in walk(directory):
 		for file in files:
-			filename = os.path.join(path, file)
-			dir_size += os.path.getsize(filename)
+			filename = path.join(paths, file)
+			dir_size += path.getsize(filename)
 	return dir_size
 
 def AddFileDialog(header,filters):
-	import wx,os
+	import wx
+	from os.path import expanduser
 	#filters = 'All files (*.*)|*.*|Text files (*.txt)|*.txt'
 	selected=[]
 	
-	dialog = wx.FileDialog ( None, message = header, defaultDir=os.path.expanduser('~/'),  wildcard = filters, style = wx.FD_OPEN | wx.FD_MULTIPLE )
+	dialog = wx.FileDialog ( None, message = header, defaultDir=expanduser('~/'),  wildcard = filters, style = wx.FD_OPEN | wx.FD_MULTIPLE )
 	
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPaths()
@@ -34,9 +35,10 @@ def AddFileDialog(header,filters):
 	return selected
 
 def AddDirDialog(header):
-	import wx,os
+	import wx
+	from os.path import expanduser
 	selected=[]
-	dialog = wx.DirDialog( None, message = header, defaultPath=os.path.expanduser('~/'),  style = wx.FD_OPEN | wx.FD_MULTIPLE )
+	dialog = wx.DirDialog( None, message = header, defaultPath=expanduser('~/'),  style = wx.FD_OPEN | wx.FD_MULTIPLE )
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPath()
 	dialog.Destroy()
@@ -44,8 +46,9 @@ def AddDirDialog(header):
 	return selected	
 
 def GetIsoDialog():
-	import wx,os
-	dialog = wx.FileDialog(None, message="Select Iso file to burn: ", defaultDir=os.path.expanduser('~/'),wildcard="Iso files (*.iso)|*.iso", style= wx.FD_OPEN)
+	import wx
+	from os.path import expanduser
+	dialog = wx.FileDialog(None, message="Select Iso file to burn: ", defaultDir=expanduser('~/'),wildcard="Iso files (*.iso)|*.iso", style= wx.FD_OPEN)
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPaths()
 	dialog.Destroy()
@@ -53,12 +56,14 @@ def GetIsoDialog():
 	return selected	
 	
 def SaveIsoDialog():
-	import wx,os,fnmatch
-	dialog = wx.FileDialog( None, message = 'Select location to save iso file:', wildcard="ISO Files (*.iso)|*.iso", defaultDir=os.path.expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
+	import wx
+	from fnmatch import fnmatch
+	from os.path import expanduser
+	dialog = wx.FileDialog( None, message = 'Select location to save iso file:', wildcard="ISO Files (*.iso)|*.iso", defaultDir=expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
 	if dialog.ShowModal() == wx.ID_OK:
 		selected = dialog.GetPath()
 	dialog.Destroy()
-	if not fnmatch.fnmatch(selected,'*.iso'):
+	if not fnmatch(selected,'*.iso'):
 		selected += '.iso'
 		
 	return selected	
@@ -76,12 +81,19 @@ def ShowGenericMsgDialog(title,type,msg):
 
 def ShowErrorWithLogDialog(logtext):
 	import wx
-	import customwidgets as cw
-	d=cw.MsgWithLogDialog('Error!','Something went wrong!','(Viewing the logs below might be helpful)','icons/errormsg.png', None,-1,'')
+	from customwidgets import MsgWithLogDialog
+	d=MsgWithLogDialog('Error!','Something went wrong!','(Viewing the logs below might be helpful)','icons/errormsg.png', None,-1,'')
 	d.SetLog(logtext)
 	d.ShowModal()
 	d.Destroy()
-		
+
+def ShowSuccessWithLogDialog(logtext):
+	import wx
+	from customwidgets import MsgWithLogDialog
+	d=MsgWithLogDialog('Success','Success! Yippeee!','(But you might still want to view/save the logs below!)','icons/successmsg.png',None,-1,'')
+	d.SetLog(logtext)
+	d.ShowModal()
+	d.Destroy()	
 	
 def ShowDeviceProp(device):
 	if device=='':
@@ -101,8 +113,8 @@ def ShowDeviceProp(device):
 		
 		
 def ClearCdRoot(CDROOT):
-	import os
-	os.system('rm -rf {0}'.format(CDROOT))
+	from os  import system
+	system('rm -rf {0}'.format(CDROOT))
 
 def CreateCdRoot(CDROOT,lst):
 	import os
