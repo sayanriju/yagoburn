@@ -566,7 +566,7 @@ class MyFrame(wx.Frame):
 		elif exitcode>0:
 			fun.ShowErrorWithLogDialog(elog)
 		else:
-			fun.ShowGenericMsgDialog('Manual Abort!',error,'The process was manually interrupted!')
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was manually interrupted!')
 			
 		#event.skip()
 
@@ -626,8 +626,54 @@ class MyFrame(wx.Frame):
 		#event.skip()
 		
 	def OnBurnData(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnBurnData' not implemented!"
-		#event.skip()
+		# Generate ISO
+		import os
+		os.system("rm -f "+TMPISO)
+		exitcode,elog,slog=fun.RunCommand("genisoimage -J -r -l -o {0} -f {1}".format(TMPISO,CDROOT))
+		print slog,exitcode,elog,'**'
+		if exitcode>0:
+			fun.ShowErrorWithLogDialog(elog)
+			return
+		elif exitcode<0:
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was manually interrupted!')
+			return
+		# Now check if only iso is selected
+		if self.data_onlyiso_check.IsChecked():
+			exitstat=os.system('mv {0} {1}'.format(TMPISO,self.data_isopath_entry.GetValue()))
+			if exitstat!=0:
+				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(self.data_isopath_entry.GetValue()))
+				return
+			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+self.data_isopath_entry.GetValue())
+			return
+		else:		# continue burning cd
+			if self.data_mode_radiobox.GetSelection() == 0:
+				mode='dao'
+			else:
+				mode='tao'
+			speed=self.data_speed_list.GetValue().replace('x','')
+			if speed=='Default Speed':
+				speed=''
+			else:
+				speed = 'speed='+str(speed)     
+				
+			dev=self.data_device_list.GetValue()
+			if dev=='':
+				fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+				return            
+			else:
+				dev=self.data_device_list.GetValue()
+			
+			if self.data_nofix_check.IsChecked():
+				nofix='-nofix'
+			else:
+				nofix=''
+			
+			if	self.data_simulate_check.IsChecked():	
+				simulate='-dummy'
+			else:
+				simulate=''		
+			
+			print "wodim dev={0} -v {1} {2} {3} {4} -eject -data {5}".format(dev,mode,speed,nofix,simulate,TMPISO)		
 
 
 	def UpdateDvdFilesView(self):
