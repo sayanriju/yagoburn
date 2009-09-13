@@ -123,7 +123,7 @@ def CreateCdRoot(CDROOT,lst):
 	import os
 	os.makedirs(CDROOT)
 	for f in lst:
-		os.system('ln -s {0} {1}/'.format(f,CDROOT))
+		os.system('ln -s "{0}" {1}/'.format(f,CDROOT))
 
 def RunCommand(cmd):
 	''' Used to actually run a command using the WIPDialog Class, and return the errorcode and appropriate logs '''
