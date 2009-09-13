@@ -20,6 +20,15 @@ def GetDirectorySize(directory):
 			dir_size += path.getsize(filename)
 	return dir_size
 
+def NotifySend(code):
+	from os import system	
+	if system('type notify-send') !=0 :
+		return		# notify-send not installed; exit gracefully
+	if code==0:
+		system('notify-send -i info "Yagoburn was SUCCESSFUL :=)"')
+	else:
+		system('notify-send -i error "Yagoburn FAILED :=("')
+
 def AddFileDialog(header,filters):
 	import wx
 	from os.path import expanduser
@@ -48,6 +57,7 @@ def AddDirDialog(header):
 def GetIsoDialog():
 	import wx
 	from os.path import expanduser
+	selected=''
 	dialog = wx.FileDialog(None, message="Select Iso file to burn: ", defaultDir=expanduser('~/'),wildcard="Iso files (*.iso)|*.iso", style= wx.FD_OPEN)
 	if dialog.ShowModal() == wx.ID_OK:
 	   selected = dialog.GetPaths()
@@ -59,6 +69,7 @@ def SaveIsoDialog():
 	import wx
 	from fnmatch import fnmatch
 	from os.path import expanduser
+	selected=''
 	dialog = wx.FileDialog( None, message = 'Select location to save iso file:', wildcard="ISO Files (*.iso)|*.iso", defaultDir=expanduser('~/'),  style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT )
 	if dialog.ShowModal() == wx.ID_OK:
 		selected = dialog.GetPath()

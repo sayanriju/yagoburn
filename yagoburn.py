@@ -70,8 +70,8 @@ class MyFrame(wx.Frame):
 		self.label_speed_1 = wx.StaticText(self.audio_cd_settings, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
 		self.audio_speed_list = wx.ComboBox(self.audio_cd_settings, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
 		self.audio_mode_radiobox = wx.RadioBox(self.audio_cd_settings, -1, "Write Mode : ", choices=["DAO (No pause between tracks)", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
-		self.audio_simulate_check = wx.CheckBox(self.audio_cd_settings, -1, "Simulate Write")
-		self.audio_nofix_check = wx.CheckBox(self.audio_cd_settings, -1, "Do NOT Fixate CD")
+		self.audio_simulate_check = wx.CheckBox(self.audio_cd_settings, -1, "Simulate Write (-dummy)")
+		self.audio_nofix_check = wx.CheckBox(self.audio_cd_settings, -1, "Do NOT Fixate CD (-nofix)")
 		self.panel_7 = wx.Panel(self.audio_cd_settings, -1)
 		self.audio_burn_button = wx.BitmapButton(self.audio_cd_settings, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
 		self.panel_4 = wx.Panel(self.audio_cd_settings, -1)
@@ -99,8 +99,8 @@ class MyFrame(wx.Frame):
 		self.data_isopath_entry = wx.TextCtrl(self.data_cd_settings, -1, "")
 		self.data_isosel_button = wx.Button(self.data_cd_settings, wx.ID_SAVE, "")
 		self.data_multi_check = wx.CheckBox(self.data_cd_settings, -1, "Start or Continue Multi-session")
-		self.data_simulate_check = wx.CheckBox(self.data_cd_settings, -1, "Simulate Write")
-		self.data_nofix_check = wx.CheckBox(self.data_cd_settings, -1, "Do NOT Fixate CD")
+		self.data_simulate_check = wx.CheckBox(self.data_cd_settings, -1, "Simulate Write (-dummy)")
+		self.data_nofix_check = wx.CheckBox(self.data_cd_settings, -1, "Disable Burnfree")
 		self.panel_7_copy = wx.Panel(self.data_cd_settings, -1)
 		self.data_burn_button = wx.BitmapButton(self.data_cd_settings, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
 		self.panel_4_copy = wx.Panel(self.data_cd_settings, -1)
@@ -126,8 +126,8 @@ class MyFrame(wx.Frame):
 		self.dvd_isopath_entry = wx.TextCtrl(self.data_dvd_settings, -1, "")
 		self.dvd_isosel_button = wx.Button(self.data_dvd_settings, wx.ID_SAVE, "")
 		self.dvd_multi_check = wx.CheckBox(self.data_dvd_settings, -1, "Start or Continue Multi-session")
-		self.dvd_simulate_check = wx.CheckBox(self.data_dvd_settings, -1, "Simulate Write")
-		self.dvd_nofix_check = wx.CheckBox(self.data_dvd_settings, -1, "Do NOT Fixate DVD")
+		self.dvd_simulate_check = wx.CheckBox(self.data_dvd_settings, -1, "Dry Run")
+		#self.dvd_nofix_check = wx.CheckBox(self.data_dvd_settings, -1, "Do NOT Fixate DVD")
 		self.panel_7_copy_copy = wx.Panel(self.data_dvd_settings, -1)
 		self.dvd_burn_button = wx.BitmapButton(self.data_dvd_settings, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
 		self.panel_4_copy_copy = wx.Panel(self.data_dvd_settings, -1)
@@ -147,9 +147,8 @@ class MyFrame(wx.Frame):
 		self.label_2_copy_copy_copy = wx.StaticText(self.burn_iso, -1, "Write Speed :      ", style=wx.ST_NO_AUTORESIZE)
 		self.burniso_speed_list = wx.ComboBox(self.burn_iso, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
 		self.burniso_mode_radiobox = wx.RadioBox(self.burn_iso, -1, "Write Mode : ", choices=["DAO", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
-		self.burniso_multi_check = wx.CheckBox(self.burn_iso, -1, "Start or Continue Multi-session")
-		self.burniso_simulate_check = wx.CheckBox(self.burn_iso, -1, "Simulate Write")
-		self.burniso_nofix_check = wx.CheckBox(self.burn_iso, -1, "Do NOT Fixate CD")
+		self.burniso_simulate_check = wx.CheckBox(self.burn_iso, -1, "Simulate Write (-dummy)")
+		#self.burniso_nofix_check = wx.CheckBox(self.burn_iso, -1, "Do NOT Fixate CD")
 		self.panel_7_copy_copy_1 = wx.Panel(self.burn_iso, -1)
 		self.burniso_burn_button = wx.BitmapButton(self.burn_iso, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
 		self.panel_4_copy_copy_1 = wx.Panel(self.burn_iso, -1)
@@ -266,8 +265,6 @@ class MyFrame(wx.Frame):
 		self.burniso_device_list.SetSelection(-1)
 		self.burniso_speed_list.SetSelection(0)
 		self.burniso_mode_radiobox.SetSelection(0)
-		self.burniso_multi_check.SetToolTipString("Multisession support is not yet implemented in Yagoburn!")
-		self.burniso_multi_check.Enable(False)
 		self.burniso_burn_button.SetMinSize((100, 60))
 		self.burniso_burn_button.SetToolTipString("Write Files to Media")
 		self.burniso_burn_button.SetDefault()
@@ -463,9 +460,8 @@ class MyFrame(wx.Frame):
 		sizer_7_copy_copy_copy_2.Add(self.burniso_speed_list, 0, wx.ALL, 11)
 		sizer_6_copy_copy_1.Add(sizer_7_copy_copy_copy_2, 1, wx.EXPAND, 0)
 		sizer_6_copy_copy_1.Add(self.burniso_mode_radiobox, 1, wx.LEFT|wx.BOTTOM|wx.EXPAND|wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL, 17)
-		sizer_6_copy_copy_1.Add(self.burniso_multi_check, 0, wx.LEFT|wx.RIGHT, 17)
-		sizer_6_copy_copy_1.Add(self.burniso_simulate_check, 0, wx.LEFT|wx.RIGHT, 17)
-		sizer_6_copy_copy_1.Add(self.burniso_nofix_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
+		sizer_6_copy_copy_1.Add(self.burniso_simulate_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
+		#sizer_6_copy_copy_1.Add(self.burniso_nofix_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
 		sizer_18_copy_copy_1.Add(self.panel_7_copy_copy_1, 1, wx.EXPAND, 0)
 		sizer_18_copy_copy_1.Add(self.burniso_burn_button, 0, 0, 0)
 		sizer_18_copy_copy_1.Add(self.panel_4_copy_copy_1, 1, wx.EXPAND, 0)
@@ -500,13 +496,19 @@ class MyFrame(wx.Frame):
 		############
 		self.audio_file_list.Clear()        
 		totalsize=0
-		for f in self.audio_files_to_burn:
-			fsize=os.path.getsize(f)
-			self.audio_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
-			totalsize+=fsize
+		if self.audio_files_to_burn!=[]:
+			for f in self.audio_files_to_burn:
+				fsize=os.path.getsize(f)
+				self.audio_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
+				totalsize+=fsize
 		self.audio_totalsize_entry.SetValue(fun.FormatSize(totalsize))
 		maxsize=int(self.audio_size_list.GetValue().split(' ')[0])*(1024**2)
-		self.audio_gauge.SetValue(int(totalsize*100/maxsize))
+		if totalsize<=maxsize:
+			self.audio_gauge.SetValue(int(totalsize*100/maxsize))
+			if totalsize==0:
+				self.audio_gauge.SetValue(0)
+		else:
+			self.audio_gauge.SetValue(100)		
 		
 
 	def AddAudioTrack(self, event): # wxGlade: MyFrame.<event_handler>
@@ -532,9 +534,9 @@ class MyFrame(wx.Frame):
 		
 	def OnBurnAudio(self, event): # wxGlade: MyFrame.<event_handler>
 		if self.audio_mode_radiobox.GetSelection() == 0:
-			mode='dao'
+			mode='-dao'
 		else:
-			mode='tao'
+			mode='-tao'
 		speed=self.audio_speed_list.GetValue().replace('x','')
 		if speed=='Default Speed':
 			speed=''
@@ -558,15 +560,17 @@ class MyFrame(wx.Frame):
 		else:
 			simulate=''		
 		
-		cmd='wodim -v -eject -pad {4} {5} -{0} {1} dev={2} defpregap=0 -audio {3}/*.wav'.format(mode,speed,dev,CDROOT,nofix,simulate)
+		cmd='wodim -v -eject -pad {4} {5} {0} {1} dev={2} defpregap=0 -audio {3}/*.wav'.format(mode,speed,dev,CDROOT,nofix,simulate)
 		
 		exitcode,elog,slog= fun.RunCommand(cmd)
 		if exitcode==0:
 			fun.ShowSuccessWithLogDialog(slog)
+			fun.NotifySend(0)
 		elif exitcode>0:
 			fun.ShowErrorWithLogDialog(elog)
+			fun.NotifySend(1)
 		else:
-			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was manually interrupted!')
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')
 			
 		#event.skip()
 
@@ -576,17 +580,20 @@ class MyFrame(wx.Frame):
 		############
 		self.data_file_list.Clear()        
 		totalsize=0
-		for f in self.data_files_to_burn:
-			if os.path.isdir(f):
-				fsize=fun.GetDirectorySize(f)
-			else:
-				fsize=os.path.getsize(f)
-			self.data_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
-			totalsize+=fsize
+		if self.data_files_to_burn!=[]:			
+			for f in self.data_files_to_burn:
+				if os.path.isdir(f):
+					fsize=fun.GetDirectorySize(f)
+				else:
+					fsize=os.path.getsize(f)
+				self.data_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
+				totalsize+=fsize
 		self.data_totalsize_entry.SetValue(fun.FormatSize(totalsize))
 		maxsize=int(self.data_size_list.GetValue().split(' ')[0])*(1024**2)
 		if totalsize<=maxsize:
 			self.data_gauge.SetValue(int(totalsize*100/maxsize))
+			if totalsize==0:
+				self.data_gauge.SetValue(0)
 		else:
 			self.data_gauge.SetValue(100)
 			
@@ -600,7 +607,6 @@ class MyFrame(wx.Frame):
 	def AddDataDir(self, event): # wxGlade: MyFrame.<event_handler>
 		self.data_files_to_burn.append(fun.AddDirDialog("Select  directories to add:"))
 		self.UpdateDataFilesView()        
-		print self.data_files_to_burn
 		#event.skip()
 
 	def RemoveDataFile(self, event): # wxGlade: MyFrame.<event_handler>
@@ -626,54 +632,69 @@ class MyFrame(wx.Frame):
 		#event.skip()
 		
 	def OnBurnData(self, event): # wxGlade: MyFrame.<event_handler>
-		# Generate ISO
-		import os
-		os.system("rm -f "+TMPISO)
-		exitcode,elog,slog=fun.RunCommand("genisoimage -J -r -l -o {0} -f {1}".format(TMPISO,CDROOT))
-		print slog,exitcode,elog,'**'
-		if exitcode>0:
-			fun.ShowErrorWithLogDialog(elog)
-			return
-		elif exitcode<0:
-			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was manually interrupted!')
-			return
-		# Now check if only iso is selected
-		if self.data_onlyiso_check.IsChecked():
-			exitstat=os.system('mv {0} {1}'.format(TMPISO,self.data_isopath_entry.GetValue()))
-			if exitstat!=0:
-				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(self.data_isopath_entry.GetValue()))
-				return
-			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+self.data_isopath_entry.GetValue())
-			return
-		else:		# continue burning cd
-			if self.data_mode_radiobox.GetSelection() == 0:
-				mode='dao'
-			else:
-				mode='tao'
-			speed=self.data_speed_list.GetValue().replace('x','')
-			if speed=='Default Speed':
-				speed=''
-			else:
-				speed = 'speed='+str(speed)     
-				
+		if not self.data_onlyiso_check.IsChecked(): # just to avoid regeneration of image if device or isopath is not selected
 			dev=self.data_device_list.GetValue()
 			if dev=='':
 				fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
 				return            
 			else:
 				dev=self.data_device_list.GetValue()
-			
+		else:
+			if self.data_isopath_entry.GetValue()=="Click button to select save iso location":
+				fun.ShowGenericMsgDialog("Error!",'error',"Choose a location to Save the iso by clicking on button beside")
+				return
+		# Generate ISO
+		import os
+		os.system("rm -f "+TMPISO)
+		## temporarily replace spaces in volname with *, to be retrieved in custowidgets.py
+		volname=self.data_volname_entry.GetValue().replace(" ",'*')
+		exitcode,elog,slog=fun.RunCommand("genisoimage -V {2} -J -r -l -o {0} -f {1}".format(TMPISO,CDROOT,volname))
+		if exitcode>0:
+			fun.ShowErrorWithLogDialog(elog)
+			return
+		elif exitcode<0:
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')
+			return
+		# Now check if only iso is selected
+		isopath=self.data_isopath_entry.GetValue()
+		if self.data_onlyiso_check.IsChecked():
+			exitstat=os.system('mv {0} {1}'.format(TMPISO,isopath))
+			if exitstat!=0:
+				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(isopath))
+				return
+			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+isopath)
+			return
+		# Continue to actually burning cd
+		else:		
 			if self.data_nofix_check.IsChecked():
-				nofix='-nofix'
+				burnfree=""
 			else:
-				nofix=''
-			
+				burnfree="driveropts=burnfree"
+			if self.data_mode_radiobox.GetSelection() == 0:
+				mode='-dao'
+			else:
+				mode='-tao'
+			speed=self.data_speed_list.GetValue().replace('x','')
+			if speed=='Default Speed':
+				speed=''
+			else:
+				speed = 'speed='+str(speed)     
+
 			if	self.data_simulate_check.IsChecked():	
 				simulate='-dummy'
 			else:
 				simulate=''		
 			
-			print "wodim dev={0} -v {1} {2} {3} {4} -eject -data {5}".format(dev,mode,speed,nofix,simulate,TMPISO)		
+			cmd="wodim dev={0} {1} {2} {3} {4} -eject -v -data {5}".format(dev,burnfree,mode,speed,simulate,TMPISO)
+			exitcode,elog,slog= fun.RunCommand(cmd)
+			if exitcode==0:
+				fun.NotifySend(0)
+				fun.ShowSuccessWithLogDialog(slog)
+			elif exitcode>0:
+				fun.NotifySend(1)
+				fun.ShowErrorWithLogDialog(elog)
+			else:
+				fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')					
 
 
 	def UpdateDvdFilesView(self):
@@ -682,16 +703,22 @@ class MyFrame(wx.Frame):
 		############
 		self.dvd_file_list.Clear()        
 		totalsize=0
-		for f in self.dvd_files_to_burn:
-			if os.path.isdir(f):
-				fsize=fun.GetDirectorySize(f)
-			else:
-				fsize=os.path.getsize(f)
-			self.dvd_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
-			totalsize+=fsize
+		if self.dvd_files_to_burn!=[]:			
+			for f in self.dvd_files_to_burn:
+				if os.path.isdir(f):
+					fsize=fun.GetDirectorySize(f)
+				else:
+					fsize=os.path.getsize(f)
+				self.dvd_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
+				totalsize+=fsize
 		self.dvd_totalsize_entry.SetValue(fun.FormatSize(totalsize))
-		maxsize=int(self.dvd_size_list.GetValue().split(' ')[0])*(1024**2)
-		self.dvd_gauge.SetValue(int(totalsize*100/maxsize))
+		maxsize=int(self.data_size_list.GetValue().split(' ')[0]*(1024**3))
+		if totalsize<=maxsize:
+			self.dvd_gauge.SetValue(int(totalsize*100/maxsize))
+			if totalsize==0:
+				self.dvd_gauge.SetValue(0)
+		else:
+			self.dvd_gauge.SetValue(100)		
 
 	def AddDvdFile(self, event): # wxGlade: MyFrame.<event_handler>
 		self.dvd_files_to_burn += (fun.AddFileDialog("Select  files to add:","All files (*.*)|*.*"))
@@ -702,8 +729,6 @@ class MyFrame(wx.Frame):
 	def AddDvdDir(self, event): # wxGlade: MyFrame.<event_handler>
 		self.dvd_files_to_burn.append(fun.AddDirDialog("Select  directories to add:"))
 		self.UpdateDvdFilesView()        
-		print self.dvd_files_to_burn
-		
 		#event.skip()
 
 	def RemoveDvdFile(self, event): # wxGlade: MyFrame.<event_handler>
@@ -730,7 +755,61 @@ class MyFrame(wx.Frame):
 		#event.skip()
 
 	def OnBurnDvd(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnBurnDvd' not implemented!"
+		if not self.dvd_onlyiso_check.IsChecked(): # just to avoid regeneration of image if device or isopath is not selected
+			dev=self.dvd_device_list.GetValue()
+			if dev=='':
+				fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+				return            
+			else:
+				dev=self.dvd_device_list.GetValue()
+		else:
+			if self.dvd_isopath_entry.GetValue()=="Click button to select save iso location":
+				fun.ShowGenericMsgDialog("Error!",'error',"Choose a location to Save the iso by clicking on button beside")
+				return		
+		# Generate ISO
+		import os
+		os.system("rm -f "+TMPISO)
+		## temporarily replace spaces in volname with *, to be retrieved in custowidgets.py
+		volname=self.dvd_volname_entry.GetValue().replace(" ",'*')
+		exitcode,elog,slog=fun.RunCommand("genisoimage -V {2} -J -r -l -o {0} -f {1}".format(TMPISO,CDROOT,volname))
+		if exitcode>0:
+			fun.ShowErrorWithLogDialog(elog)
+			return
+		elif exitcode<0:
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')
+			return
+		# Now check if only iso is selected
+		if self.dvd_onlyiso_check.IsChecked():
+			exitstat=os.system('mv {0} {1}'.format(TMPISO,self.dvd_isopath_entry.GetValue()))
+			if exitstat!=0:
+				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(self.dvd_isopath_entry.GetValue()))
+				return
+			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+self.dvd_isopath_entry.GetValue())
+			return
+		# Continue to actually burning dvd
+		else:		
+			speed=self.dvd_speed_list.GetValue().replace('x','')
+			if speed=='Default Speed':
+				speed=''
+			else:
+				speed = 'speed='+str(speed)     
+		
+			if	self.data_simulate_check.IsChecked():	
+				simulate='-dry-run'
+			else:
+				simulate=''		
+			
+			cmd="growisofs {0} {1} -dvd-compat -Z {2}={3}".format(simulate,speed,dev,TMPISO)
+			print cmd
+			exitcode,elog,slog= fun.RunCommand(cmd)
+			if exitcode==0:
+				fun.NotifySend(0)
+				fun.ShowSuccessWithLogDialog(slog)
+			elif exitcode>0:
+				fun.NotifySend(1)
+				fun.ShowErrorWithLogDialog(elog)
+			else:
+				fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')		
 		#event.skip()
 		
 	def OnQuickBlankCd(self, event): # wxGlade: MyFrame.<event_handler>
@@ -796,7 +875,7 @@ class MyFrame(wx.Frame):
 			self.dvd_isopath_entry.SetValue('Click button to select save iso location')
 			self.dvd_isosel_button.Enable(ischecked) 
 			self.dvd_simulate_check.Enable(not ischecked)
-			self.dvd_nofix_check.Enable(not ischecked)            
+			#self.dvd_nofix_check.Enable(not ischecked)            
 			#event.skip()
 
 	def SelectDataIsoSaveLocation(self, event):

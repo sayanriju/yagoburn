@@ -101,7 +101,8 @@ class WIPDialog(wx.Dialog):
 	
 	def RunCommand(self):
 		cmdlist=self.cmd.split(' ')
-		cmdlist=[cmd for cmd in cmdlist if cmd!=''] # remove '' as a command
+		cmdlist=[cmd for cmd in cmdlist if cmd!=''] # remove '' from list
+		cmdlist=[cmd.replace('*',' ') for cmd in cmdlist] # to retrieve spaces in volname
 		from subprocess import Popen,PIPE
 		self.proc=Popen(cmdlist,stdout=PIPE,stderr=PIPE)
 
