@@ -100,7 +100,10 @@ def ShowDeviceProp(device):
 		ShowGenericMsgDialog('Error!','error','Choose a device first!')
 		return
 	import subprocess as sp
-	proc=sp.Popen(['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive'],stdout=sp.PIPE,stderr=sp.PIPE)
+	cmdlist=['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive']
+	#"wodim dev={0} -atip".format(device).split(' ')
+	#['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive']
+	proc=sp.Popen(cmdlist,stdout=sp.PIPE,stderr=sp.PIPE)
 	exitcode=proc.wait()
 	#print exitcode
 	if exitcode == 0:

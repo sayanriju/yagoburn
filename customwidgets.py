@@ -9,7 +9,7 @@ class WIPDialog(wx.Dialog):
 	successlog= the actual log on success, '' on failure and forced kill '''
 	def __init__(self, *args, **kwds):
 		self.cmd=args[0]
-		args=args[1:-1]
+		args=args[1:]
 		## Stuff to "return"
 		self.exitcode=1
 		self.errorlog=''
@@ -89,13 +89,19 @@ class WIPDialog(wx.Dialog):
 	def OnStop(self,event):
 		d=wx.MessageDialog(None, "Are you sure you want to stop the process  \"{0}\" running with PID {1}?\n\n(It is still running in the background while you decide!)".format(self.cmd,self.proc.pid),'Confirm Kill', wx.YES_NO|wx.ICON_QUESTION)
 		if d.ShowModal()== wx.ID_YES:
-			self.proc.kill()
+			try:
+				self.proc.kill()
+			except OSError:
+				pass
 		d.Destroy()
 		self.exitcode=-1
+		self.errorlog=''
+		self.successlog=''
 		self.Close()
 	
 	def RunCommand(self):
 		cmdlist=self.cmd.split(' ')
+		cmdlist=[cmd for cmd in cmdlist if cmd!=''] # remove '' as a command
 		from subprocess import Popen,PIPE
 		self.proc=Popen(cmdlist,stdout=PIPE,stderr=PIPE)
 
@@ -109,7 +115,7 @@ class MsgWithLogDialog(wx.Dialog):
 		heading=args[1]
 		msg=args[2]
 		icon=args[3]
-		args=args[4:-1]
+		args=args[4:]
 		kwds["style"] = wx.DEFAULT_DIALOG_STYLE
 		wx.Dialog.__init__(self, *args, **kwds)
 		self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap(icon, wx.BITMAP_TYPE_ANY))
