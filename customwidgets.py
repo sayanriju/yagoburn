@@ -92,12 +92,12 @@ class WIPDialog(wx.Dialog):
 			try:
 				self.proc.kill()
 			except OSError:
-				pass
+				print("Kill Failed!")	# for debugging only
+			self.exitcode=-1
+			self.errorlog=''
+			self.successlog=''
+			self.Close()
 		d.Destroy()
-		self.exitcode=-1
-		self.errorlog=''
-		self.successlog=''
-		self.Close()
 	
 	def RunCommand(self):
 		cmdlist=self.cmd.split(' ')
@@ -167,7 +167,7 @@ class MsgWithLogDialog(wx.Dialog):
 			f.write(self.text_ctrl_1.GetValue())
 			f.close()
 		except IOError:
-			dial=wx.MessageDialog(None, "Unable to save file on location {0}\n\nCheck  permissons!'".format(selected[0]), 'Error Saving File!', wx.OK | wx.ICON_ERROR)
+			dial=wx.MessageDialog(None, "Unable to save log file on location {0}\n\nCheck  permissons!'".format(selected[0]), 'Error Saving File!', wx.OK | wx.ICON_ERROR)
 			dial.ShowModal()
 			dial.Destroy()
 	
@@ -180,3 +180,9 @@ class MsgWithLogDialog(wx.Dialog):
 	def SetLog(self, txt):
 		self.text_ctrl_1.SetValue(txt)
 
+import wx
+app=wx.App()
+d=WIPDialog('sleep 5000000000000000000000000000000000000000000000000000000000',None,-1,'')
+d.ShowModal()
+d.Destroy()
+app.MainLoop()
