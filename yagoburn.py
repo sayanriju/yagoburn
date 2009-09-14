@@ -660,7 +660,7 @@ class MyFrame(wx.Frame):
 		if self.data_onlyiso_check.IsChecked():
 			exitstat=os.system('mv {0} {1}'.format(TMPISO,isopath))
 			if exitstat!=0:
-				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(isopath))
+				fun.ShowGenericMsgDialog('Permissions Error!','error','Unable to create file {0}!\n\n(Your required iso is still at {1})'.format(isopath,TMPISO))
 				return
 			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+isopath)
 			return
@@ -712,7 +712,8 @@ class MyFrame(wx.Frame):
 				self.dvd_file_list.Append("{0}  ({1})".format(f,fun.FormatSize(fsize)))
 				totalsize+=fsize
 		self.dvd_totalsize_entry.SetValue(fun.FormatSize(totalsize))
-		maxsize=int(self.data_size_list.GetValue().split(' ')[0]*(1024**3))
+		maxsize_str=self.dvd_size_list.GetValue().split(' ')[0].replace(".","")
+		maxsize=int(maxsize_str)*(1024**3)/10
 		if totalsize<=maxsize:
 			self.dvd_gauge.SetValue(int(totalsize*100/maxsize))
 			if totalsize==0:
@@ -782,7 +783,7 @@ class MyFrame(wx.Frame):
 		if self.dvd_onlyiso_check.IsChecked():
 			exitstat=os.system('mv {0} {1}'.format(TMPISO,self.dvd_isopath_entry.GetValue()))
 			if exitstat!=0:
-				fun.ShowGenericMsgDialog('Error!','error','Unable to create file {0}!\n\nCheck permissions!'.format(self.dvd_isopath_entry.GetValue()))
+				fun.ShowGenericMsgDialog('Permissions Error!','error','Unable to create file {0}!\n\nYour required iso is still at {1}'.format(self.dvd_isopath_entry.GetValue(),TMPISO))
 				return
 			fun.ShowGenericMsgDialog('Success!','info', "Successfully created ISO file "+self.dvd_isopath_entry.GetValue())
 			return
@@ -794,7 +795,7 @@ class MyFrame(wx.Frame):
 			else:
 				speed = 'speed='+str(speed)     
 		
-			if	self.data_simulate_check.IsChecked():	
+			if	self.dvd_simulate_check.IsChecked():	
 				simulate='-dry-run'
 			else:
 				simulate=''		
