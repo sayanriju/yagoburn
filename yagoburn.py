@@ -134,10 +134,10 @@ class MyFrame(wx.Frame):
 		self.label_device_1_copy = wx.StaticText(self.blank_disk, -1, "Target Device : ", style=wx.ST_NO_AUTORESIZE)
 		self.format_device_list = wx.ComboBox(self.blank_disk, -1, choices=cd_devices+dvd_devices, style=wx.CB_DROPDOWN)
 		self.format_devprop_button = wx.Button(self.blank_disk, wx.ID_PROPERTIES, "")
-		self.quickblankcd_button_copy = wx.Button(self.blank_disk, -1, "Quick Blank CDRW")
-		self.formatdvd_button_copy = wx.Button(self.blank_disk, -1, "Format DVDRW")
-		self.fullblankcd_button_copy = wx.Button(self.blank_disk, -1, "Full Blank CDRW")
-		self.justfixate_button_copy = wx.Button(self.blank_disk, -1, "Just Fixate Disk")
+		self.quickblankcd_button_copy = wx.Button(self.blank_disk,501, "Quick Blank CDRW")
+		self.formatdvd_button_copy = wx.Button(self.blank_disk,502, "Format DVDRW")
+		self.fullblankcd_button_copy = wx.Button(self.blank_disk,503, "Full Blank CDRW")
+		self.justfixate_button_copy = wx.Button(self.blank_disk,504, "Just Fixate Disk")
 		self.label_1 = wx.StaticText(self.burn_iso, -1, "Choose ISO File to burn : ", style=wx.ST_NO_AUTORESIZE)
 		self.burn_isopath_entry = wx.TextCtrl(self.burn_iso, -1, "")
 		self.burn_isosel_button = wx.Button(self.burn_iso, wx.ID_OPEN, "")
@@ -148,7 +148,7 @@ class MyFrame(wx.Frame):
 		self.burniso_speed_list = wx.ComboBox(self.burn_iso, -1, choices=write_speeds, style=wx.CB_DROPDOWN)
 		self.burniso_mode_radiobox = wx.RadioBox(self.burn_iso, -1, "Write Mode : ", choices=["DAO", "TAO"], majorDimension=2, style=wx.RA_SPECIFY_COLS)
 		self.burniso_simulate_check = wx.CheckBox(self.burn_iso, -1, "Simulate Write (-dummy)")
-		#self.burniso_nofix_check = wx.CheckBox(self.burn_iso, -1, "Do NOT Fixate CD")
+		self.burniso_nofix_check = wx.CheckBox(self.burn_iso, -1, "Disable Burnfree")
 		self.panel_7_copy_copy_1 = wx.Panel(self.burn_iso, -1)
 		self.burniso_burn_button = wx.BitmapButton(self.burn_iso, -1, wx.Bitmap("icons/burn.png", wx.BITMAP_TYPE_ANY), style=wx.BU_AUTODRAW)
 		self.panel_4_copy_copy_1 = wx.Panel(self.burn_iso, -1)
@@ -181,10 +181,10 @@ class MyFrame(wx.Frame):
 		self.dvd_isosel_button.Bind(wx.EVT_BUTTON, self.SelectDvdIsoSaveLocation)
 		self.dvd_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnDvd)
 		self.format_devprop_button.Bind(wx.EVT_BUTTON, self.ShowFormatDeviceProp)
-		self.quickblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnQuickBlankCd)
-		self.formatdvd_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatDvd)
-		self.fullblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnFullBlankCd)
-		self.justfixate_button_copy.Bind(wx.EVT_BUTTON, self.OnFixateDisk)
+		self.quickblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatStuff)
+		self.formatdvd_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatStuff)
+		self.fullblankcd_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatStuff)
+		self.justfixate_button_copy.Bind(wx.EVT_BUTTON, self.OnFormatStuff)
 		self.burn_isosel_button.Bind(wx.EVT_BUTTON, self.SelectIsoLocation)
 		self.burniso_devprop_button.Bind(wx.EVT_BUTTON, self.ShowBurnisoDeviceProp)
 		self.burniso_burn_button.Bind(wx.EVT_BUTTON, self.OnBurnIso)
@@ -460,8 +460,8 @@ class MyFrame(wx.Frame):
 		sizer_7_copy_copy_copy_2.Add(self.burniso_speed_list, 0, wx.ALL, 11)
 		sizer_6_copy_copy_1.Add(sizer_7_copy_copy_copy_2, 1, wx.EXPAND, 0)
 		sizer_6_copy_copy_1.Add(self.burniso_mode_radiobox, 1, wx.LEFT|wx.BOTTOM|wx.EXPAND|wx.ALIGN_BOTTOM|wx.ALIGN_CENTER_HORIZONTAL, 17)
-		sizer_6_copy_copy_1.Add(self.burniso_simulate_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
-		#sizer_6_copy_copy_1.Add(self.burniso_nofix_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
+		sizer_6_copy_copy_1.Add(self.burniso_simulate_check, 0, wx.LEFT|wx.RIGHT,17)
+		sizer_6_copy_copy_1.Add(self.burniso_nofix_check, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 17)
 		sizer_18_copy_copy_1.Add(self.panel_7_copy_copy_1, 1, wx.EXPAND, 0)
 		sizer_18_copy_copy_1.Add(self.burniso_burn_button, 0, 0, 0)
 		sizer_18_copy_copy_1.Add(self.panel_4_copy_copy_1, 1, wx.EXPAND, 0)
@@ -637,8 +637,6 @@ class MyFrame(wx.Frame):
 			if dev=='':
 				fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
 				return            
-			else:
-				dev=self.data_device_list.GetValue()
 		else:
 			if self.data_isopath_entry.GetValue()=="Click button to select save iso location":
 				fun.ShowGenericMsgDialog("Error!",'error',"Choose a location to Save the iso by clicking on button beside")
@@ -761,8 +759,6 @@ class MyFrame(wx.Frame):
 			if dev=='':
 				fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
 				return            
-			else:
-				dev=self.dvd_device_list.GetValue()
 		else:
 			if self.dvd_isopath_entry.GetValue()=="Click button to select save iso location":
 				fun.ShowGenericMsgDialog("Error!",'error',"Choose a location to Save the iso by clicking on button beside")
@@ -813,26 +809,55 @@ class MyFrame(wx.Frame):
 				fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')		
 		#event.skip()
 		
-	def OnQuickBlankCd(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `QuickBlankCd' not implemented!"
-		#event.skip()
-
-	def OnFormatDvd(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnFormatDvd' not implemented!"
-		#event.skip()
-
-	def OnFullBlankCd(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnFullBlankCd' not implemented!"
-		#event.skip()
-
-	def OnFixateDisk(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnFixateDisk' not implemented!"
-		#event.skip()
-
-	def OnBurnIso(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `OnBurnIso' not implemented!"
-		#event.skip()
+	def OnFormatStuff(self, event):
+		dev=self.format_device_list.GetValue()
+		if dev=='':
+			fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+			return        
+		if event.GetId()==501:    # Quick Blank CD
+			cmd="wodim -blank=fast -v dev={0}".format(dev)
+		elif event.GetId()==502:	# Format DVD
+			cmd="dvd+rw-format -force=full {0}".format(dev)
+		elif event.GetId()==503:	# Full Blank CD
+			cmd="wodim -blank=all -v dev={0}".format(dev)
+		elif event.GetId()==504:	#Juts Fixate the CD
+			cmd="wodim -fix -v dev={0}".format(dev)	
 		
+	def OnBurnIso(self, event): # wxGlade: MyFrame.<event_handler>
+		dev=self.burniso_device_list
+		if dev=='':
+			fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
+			return 
+		iso2burn=self.burn_isopath_entry.GetValue()
+		speed=self.burniso_speed_list.GetValue().replace('x','')
+		if speed=="Default Speed":
+			speed=''
+		else:
+			speed="speed={0}".format(str(speed))
+		if self.burniso_nofix_check.IsChecked():
+			burnfree=''
+		else:
+			burnfree='driveropts=burnfree'
+		if self.burniso_simulate_check.IsChecked():
+			simulate="-dummy"
+		else:
+			simulate=""
+		if self.burniso_mode_radiobox.GetSelection()==0:
+			mode="-dao"
+		else:
+			mode="-tao"
+			
+		cmd="wodim dev={0} {1} {2} {3} {4} -eject -v {5}".format(dev,burnfree,speed,mode,simulate,iso2burn)
+		
+		exitcode,elog,slog= fun.RunCommand(cmd)
+		if exitcode==0:
+			fun.NotifySend(0)
+			fun.ShowSuccessWithLogDialog(slog)
+		elif exitcode>0:
+			fun.NotifySend(1)
+			fun.ShowErrorWithLogDialog(elog)
+		else:
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')							
 
 	def ShowAudioDeviceProp(self, event): # wxGlade: MyFrame.<event_handler>
 		fun.ShowDeviceProp(self.audio_device_list.GetValue())
