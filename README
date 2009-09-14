@@ -1,0 +1,18 @@
+Not much to read right now!
+
+DEPENDENCIES:
+---------------------------------------------
+ * Recent versions of cdrkit (genisoimage and wodim)
+ * Recent versions of dvd+rw-tools 
+ * Python (>=2.6.2)
+ * wxpython (>=2.8.9) (Note: The package is called python-wxgtk in Ubuntu, etc)
+ * Libnotify binaries (OPTIONAL) 
+
+To Run
+---------------------------------------------
+
+Decompress the tarball.
+Change directory (cd in terminal) to the directory 'yagoburn'.
+Type : 'python yagoburn.py' and press ENTER.
+OR (if in GUI filemanager) just double click on file yagoburn.py
+
