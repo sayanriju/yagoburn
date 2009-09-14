@@ -101,7 +101,7 @@ def ShowErrorWithLogDialog(logtext):
 def ShowSuccessWithLogDialog(logtext):
 	import wx
 	from customwidgets import MsgWithLogDialog
-	d=MsgWithLogDialog('Success','Success! Yippeee!','(But you might still want to view/save the logs below!)','icons/successmsg.png',None,-1,'')
+	d=MsgWithLogDialog('Success','Success! Yippeee!','(But you might still want to\n view/save the logs below!)','icons/successmsg.png',None,-1,'')
 	d.SetLog(logtext)
 	d.ShowModal()
 	d.Destroy()	
@@ -112,15 +112,11 @@ def ShowDeviceProp(device):
 		return
 	import subprocess as sp
 	cmdlist=['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive']
-	#"wodim dev={0} -atip".format(device).split(' ')
-	#['wodim','dev={0}'.format(device),'driveropts=help', '-checkdrive']
 	proc=sp.Popen(cmdlist,stdout=sp.PIPE,stderr=sp.PIPE)
 	exitcode=proc.wait()
-	#print exitcode
 	if exitcode == 0:
 		ShowGenericMsgDialog('Properties for {0}'.format(device),'info',proc.communicate()[0])
 	else:
-		#ShowGenericMsgDialog('Properties for {0}'.format(device),'error',proc.communicate()[1])
 		ShowErrorWithLogDialog(proc.communicate()[1])
 	
 	return
@@ -148,3 +144,7 @@ def RunCommand(cmd):
 	
 	return exitcode, errorlog, successlog
 
+#import wx
+#a=wx.App()
+#ShowSuccessWithLogDialog('bbbbbb')
+#a.MainLoop()

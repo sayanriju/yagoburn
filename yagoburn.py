@@ -797,7 +797,6 @@ class MyFrame(wx.Frame):
 				simulate=''		
 			
 			cmd="growisofs {0} {1} -dvd-compat -Z {2}={3}".format(simulate,speed,dev,TMPISO)
-			print cmd
 			exitcode,elog,slog= fun.RunCommand(cmd)
 			if exitcode==0:
 				fun.NotifySend(0)
@@ -820,8 +819,29 @@ class MyFrame(wx.Frame):
 			cmd="dvd+rw-format -force=full {0}".format(dev)
 		elif event.GetId()==503:	# Full Blank CD
 			cmd="wodim -blank=all -v dev={0}".format(dev)
-		elif event.GetId()==504:	#Juts Fixate the CD
-			cmd="wodim -fix -v dev={0}".format(dev)	
+		elif event.GetId()==504:	#Just Fixate the CD
+			cmd="wodim -fix -v dev={0}".format(dev)
+		
+		exitcode,elog,slog= fun.RunCommand(cmd)
+		if fnmatch.fnmatch(cmd,'*dvd+rw*')and exitcode >=0:	# dvd+rw tools doesn't generate proper exit code!
+			if slog != '':
+				exitcode=0
+			elif elog != '':
+				exitcode=1
+#			log="WARNING: dvd+rw tools does NOT generate proper exit\ncodes. Hence, even if you see a success message here\nit doesn't necessarily mean that all went ok,\nand vice versa!!!  :=(\nCheck all the logs below carefully to know for sure!"
+#			log+="\n"+"="*11+"\n\n"
+#			log+=elog+"\n\n"+"="*11+"\n\n"+slog
+#			slog=log
+#			elog=log
+			
+		if exitcode==0:
+			fun.NotifySend(0)
+			fun.ShowSuccessWithLogDialog(slog)
+		elif exitcode>0:
+			fun.NotifySend(1)
+			fun.ShowErrorWithLogDialog(elog)
+		else:	# Manual Abort
+			fun.ShowGenericMsgDialog('Manual Abort!','error','The process was prematurely interrupted!')			
 		
 	def OnBurnIso(self, event): # wxGlade: MyFrame.<event_handler>
 		dev=self.burniso_device_list.GetValue()
@@ -854,7 +874,6 @@ class MyFrame(wx.Frame):
 			mode="-tao"
 			
 		cmd="wodim dev={0} {1} {2} {3} {4} -eject -v {5}".format(dev,burnfree,speed,mode,simulate,iso2burn)
-		print cmd
 		
 		exitcode,elog,slog= fun.RunCommand(cmd)
 		if exitcode==0:

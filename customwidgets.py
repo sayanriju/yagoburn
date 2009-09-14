@@ -68,20 +68,16 @@ class WIPDialog(wx.Dialog):
 	
 		self.bar.Pulse()
 		self.proc.poll()
-		if self.proc.returncode != None:
+		if self.proc.returncode != None:	# Process completed
+			self.timer.Stop()
 			self.bar.SetValue(100)
-			if self.proc.returncode :
-				self.exitcode=1
-				try:
-					self.errorlog=self.proc.communicate()[1]
-				except ValueError:
-					pass		## Why does it sometimes raise a Value Error here????
-			else:
-				self.exitcode=0
-				try:
-					self.successlog=self.proc.communicate()[0]
-				except ValueError:
-					pass		## Why does it sometimes raise a Value Error here????
+			self.exitcode=self.proc.returncode
+			try:
+				logs=self.proc.communicate()
+			except ValueError:
+				pass ## ??????????????
+			self.successlog=logs[0]
+			self.errorlog=logs[1]
 			self.Close()
 				
 	
@@ -92,7 +88,7 @@ class WIPDialog(wx.Dialog):
 			try:
 				self.proc.kill()
 			except OSError:
-				print("Kill Failed!")	# for debugging only
+				print("Could not kill PID {0}".format(self.proc.pid))	# for debugging only
 			self.exitcode=-1
 			self.errorlog=''
 			self.successlog=''
@@ -180,9 +176,3 @@ class MsgWithLogDialog(wx.Dialog):
 	def SetLog(self, txt):
 		self.text_ctrl_1.SetValue(txt)
 
-import wx
-app=wx.App()
-d=WIPDialog('sleep 5000000000000000000000000000000000000000000000000000000000',None,-1,'')
-d.ShowModal()
-d.Destroy()
-app.MainLoop()
