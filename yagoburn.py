@@ -824,11 +824,17 @@ class MyFrame(wx.Frame):
 			cmd="wodim -fix -v dev={0}".format(dev)	
 		
 	def OnBurnIso(self, event): # wxGlade: MyFrame.<event_handler>
-		dev=self.burniso_device_list
+		dev=self.burniso_device_list.GetValue()
 		if dev=='':
 			fun.ShowGenericMsgDialog('Error!','error','Choose a device first!')
 			return 
 		iso2burn=self.burn_isopath_entry.GetValue()
+		if iso2burn=="" :
+			fun.ShowGenericMsgDialog("Error!",'error',"Choose an ISO to burn!")
+			return
+		elif not fnmatch.fnmatch(iso2burn,"/*"):
+			fun.ShowGenericMsgDialog("Error!",'error',"It doesn't look like you chose\na proper path to an .iso file!")
+			return			
 		speed=self.burniso_speed_list.GetValue().replace('x','')
 		if speed=="Default Speed":
 			speed=''
@@ -848,6 +854,7 @@ class MyFrame(wx.Frame):
 			mode="-tao"
 			
 		cmd="wodim dev={0} {1} {2} {3} {4} -eject -v {5}".format(dev,burnfree,speed,mode,simulate,iso2burn)
+		print cmd
 		
 		exitcode,elog,slog= fun.RunCommand(cmd)
 		if exitcode==0:
