@@ -79,7 +79,7 @@ def GetIsoDialog():
 	selected=''
 	dialog = wx.FileDialog(None, message="Select Iso file to burn: ", defaultDir=expanduser('~/'),wildcard="Iso files (*.iso)|*.iso", style= wx.FD_OPEN)
 	if dialog.ShowModal() == wx.ID_OK:
-	   selected = dialog.GetPaths()
+	   selected = dialog.GetPath()
 	dialog.Destroy()
 	
 	return selected	

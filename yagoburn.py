@@ -956,7 +956,8 @@ class MyFrame(wx.Frame):
 		self.dvd_isopath_entry.SetValue(path)            
 		
 	def SelectIsoLocation(self, event): # wxGlade: MyFrame.<event_handler>
-		fun.AddFileDialog('Select Iso file to burn : ','Iso files (*.iso)|*.iso|All files (*.*)|*.*')
+		path=fun.GetIsoDialog()
+		self.burn_isopath_entry.SetValue(path)
 		#event.skip()
 		
 	def OnQuitProgram(self, event):
