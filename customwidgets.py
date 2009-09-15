@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Filename: customwidgets.py
 
 #       This file is part of Yagoburn, which is FREE software; 
 #		you can redistribute it and/or modify it under the terms of 
