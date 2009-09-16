@@ -965,6 +965,7 @@ class MyFrame(wx.Frame):
 		dlg = wx.MessageDialog(self, "Are you sure you want to Exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
 		if dlg.ShowModal() == wx.ID_YES:
 			self.Destroy() # frame
+			return 0		# return exitcode to OS
 		dlg.Destroy()
 				
 
